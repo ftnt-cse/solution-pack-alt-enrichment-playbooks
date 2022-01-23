@@ -5,7 +5,7 @@
     "aliasName": null,
     "tag": "#Subroutine",
     "description": "Retrieves the reputation of indicators of type \u2018Domain\u2019 using configured threat intelligence tools.",
-    "isActive": true,
+    "isActive": false,
     "debug": false,
     "singleRecordExecution": false,
     "remoteExecutableFlag": false,
@@ -957,7 +957,7 @@
     "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
     "createDate": 1642583836,
     "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
-    "modifyDate": 1642699950,
+    "modifyDate": 1642932993,
     "owners": [],
     "isPrivate": false
 }
