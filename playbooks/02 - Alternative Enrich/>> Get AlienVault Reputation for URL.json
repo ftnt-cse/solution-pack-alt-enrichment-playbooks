@@ -1,0 +1,147 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Get AlienVault Reputation for URL",
+    "aliasName": null,
+    "tag": null,
+    "description": "Input is URL, Output is HTML reputation details and HTML score and Integer score",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "URL",
+        "MockOutput"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1642930464,
+    "collection": "\/api\/3\/workflow_collections\/c7f696c6-1ce6-473b-85f8-c99ffe4d515b",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/2497f6bc-b457-4999-ad5a-52139e6866c5",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "otx_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">AlienVault OTX<\/h4><\/div><div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">Record Details<\/h2>    <p style=\"padding:1px;color:white;\">\n{{vars.output_list|json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=true, table_style={'th':'background-color:#22a6af !important;'})}}<\/p><\/div>",
+                "otx_score": "{{vars.otx_data.general.pulse_info.count}}",
+                "otx_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n<tr><td>\n<table style=\"color:white;font-size:11;\" >\n<tr>\n<td>\n<html>\n  <head>\n    <title>Title of the document<\/title>\n    <style>\n      span.circle {\n        background: #2f3f51;\n        border-radius: 50%;\n        -moz-border-radius: 50%;\n        -webkit-border-radius: 50%;\n        display: inline-block;\n         font-weight: bold;\n        line-height: 70px;\n        margin-right: 5px;\n        text-align: center;\n        width: 100px;\n      font-size:15px;\n     border-color: Black;\n      }\n    <\/style>\n  <\/head>\n  <body><span class=\"circle\"><i style=\"font-size:46px;color:red \">\n    {{vars.otx_data.general.pulse_info.count}}<\/i><\/span>\n<br>\n   <center>AlienVault<\/center>\n  <\/body>\n<\/html>\n<\/td>\n<\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "0734a217-7d00-4035-a69b-acd1363421ff",
+            "id": 12716
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params['URL']}}",
+                    "output_list": "{}",
+                    "table_color": "#22a6af",
+                    "useMockOutput": "{{vars.input.params.MockOutput or False}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "2497f6bc-b457-4999-ad5a-52139e6866c5",
+            "id": 12717
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Results and Compute Details",
+            "description": null,
+            "arguments": {
+                "__tmp0": "{%set tmp_list = vars.otx_data.general.pulse_info|json_query('pulses[].[TLP,name]')%}{%if tmp_list|length > 0%}{%for entries in tmp_list%}{{vars.output_list.update({entries.0+' TLP':entries.1})}}{%endfor%}{%endif%}",
+                "__tmp1": "{{vars.output_list.update({'Score':vars.otx_data.general.pulse_info.count})}}",
+                "__tmp2": "{%set tmp_list = vars.otx_data.general.pulse_info|json_query('pulses[].[description,adversary]')%}{%if tmp_list|length > 0%}{%for entries in tmp_list%}{{vars.output_list.update({'Description':entries.0.replace('.','.<br>')})}}{%if entries.1%}{{vars.output_list.update({'adversary':entries.1})}}{%endif%}{%endfor%}{%endif%}",
+                "__tmp_tags": "{%set tmp_res=[]%}\n{%set tmp_list=vars.otx_data.general.pulse_info|json_query('pulses[].tags')|flatten(levels=1)|unique%}{%if tmp_list|length > 0%}{%set tmp_list=(tmp_list|batch(5)|list)%}{%endif%}{%for item in tmp_list%}{{tmp_res.append(item|join(', ')+'<br>')}}{%endfor%}\n{%if tmp_res|length >0%}\n{{vars.output_list.update({'TAGs':tmp_res|join('')})}}\n{%endif%}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "93ca069c-b9c3-4784-9b6a-7176d905ef1e",
+            "id": 12718
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Reputation from AlienVault OTX",
+            "description": null,
+            "arguments": {
+                "name": "AlienVault-OTX",
+                "config": "3d96900a-f870-4ac6-94d0-00865dbaf86f",
+                "params": {
+                    "url": "{{vars.record}}"
+                },
+                "version": "1.0.1",
+                "connector": "alienvault-otx",
+                "operation": "get_url_reputation",
+                "mock_result": "{\n  \"data\": {\n    \"general\": {\n      \"type\": \"url\",\n      \"alexa\": \"http:\/\/www.alexa.com\/siteinfo\/blogspot.com\",\n      \"whois\": \"http:\/\/whois.domaintools.com\/blogspot.com\",\n      \"domain\": \"blogspot.com\",\n      \"hostname\": \"onedayiwillloveyouforever.blogspot.com\",\n      \"sections\": [\n        \"general\",\n        \"url_list\",\n        \"http_scans\",\n        \"screenshot\"\n      ],\n      \"indicator\": \"https:\/\/onedayiwillloveyouforever.blogspot.com\/p\/divine111.html\",\n      \"pulse_info\": {\n        \"count\": 1,\n        \"pulses\": [\n          {\n            \"id\": \"61b75c2915050cf6e811fef9\",\n            \"TLP\": \"white\",\n            \"name\": \"Phishing Campaign Targeting Korean to Deliver Agent Tesla New Variant\",\n            \"tags\": [\n              \"phishing\",\n              \"phishing campaign\",\n              \"Microsoft PowerPoint\",\n              \"Malicious Document\",\n              \"Agent Tesla\",\n              \"VBScript\",\n              \"PowerShell\"\n            ],\n            \"vote\": 0,\n            \"author\": {\n              \"id\": \"2\",\n              \"username\": \"AlienVault\",\n              \"avatar_url\": \"\/otxapi\/users\/avatar_image\/media\/avatars\/user_2\/resized\/80\/avatar_dacfad0ca8.png\",\n              \"is_following\": false,\n              \"is_subscribed\": true\n            },\n            \"groups\": [],\n            \"locked\": false,\n            \"public\": 1,\n            \"created\": \"2021-12-13T14:43:52.540000\",\n            \"in_group\": false,\n            \"modified\": \"2021-12-13T14:43:52.540000\",\n            \"adversary\": \"\",\n            \"is_author\": false,\n            \"attack_ids\": [\n              {\n                \"id\": \"T1115\",\n                \"name\": \"Clipboard Data\",\n                \"display_name\": \"T1115 - Clipboard Data\"\n              },\n              {\n                \"id\": \"T1053\",\n                \"name\": \"Scheduled Task\/Job\",\n                \"display_name\": \"T1053 - Scheduled Task\/Job\"\n              },\n              {\n                \"id\": \"T1137\",\n                \"name\": \"Office Application Startup\",\n                \"display_name\": \"T1137 - Office Application Startup\"\n              },\n              {\n                \"id\": \"T1113\",\n                \"name\": \"Screen Capture\",\n                \"display_name\": \"T1113 - Screen Capture\"\n              },\n              {\n                \"id\": \"T1070\",\n                \"name\": \"Indicator Removal on Host\",\n                \"display_name\": \"T1070 - Indicator Removal on Host\"\n              },\n              {\n                \"id\": \"T1555\",\n                \"name\": \"Credentials from Password Stores\",\n                \"display_name\": \"T1555 - Credentials from Password Stores\"\n              },\n              {\n                \"id\": \"T1055\",\n                \"name\": \"Process Injection\",\n                \"display_name\": \"T1055 - Process Injection\"\n              },\n              {\n                \"id\": \"T1059\",\n                \"name\": \"Command and Scripting Interpreter\",\n                \"display_name\": \"T1059 - Command and Scripting Interpreter\"\n              },\n              {\n                \"id\": \"T1218\",\n                \"name\": \"Signed Binary Proxy Execution\",\n                \"display_name\": \"T1218 - Signed Binary Proxy Execution\"\n              },\n              {\n                \"id\": \"T1566\",\n                \"name\": \"Phishing\",\n                \"display_name\": \"T1566 - Phishing\"\n              }\n            ],\n            \"industries\": [],\n            \"references\": [\n              \"https:\/\/www.fortinet.com\/blog\/threat-research\/phishing-campaign-targeting-korean-to-deliver-agent-tesla-new-variant\"\n            ],\n            \"cloned_from\": null,\n            \"description\": \"A phishing campaign was recently caught in the wild by Fortinet\u2019s FortiGuard Labs, that delivers a malicious Microsoft PowerPoint file. The content of the phishing email,  written in Korean, asks recipients to open the attached PowerPoint file to review a purchase order. I researched what this malicious file does once the PowerPoint file is opened and have been able to confirm that it is spreading a new variant of Agent Tesla.\",\n            \"is_modified\": false,\n            \"votes_count\": 0,\n            \"export_count\": 181,\n            \"pulse_source\": \"web\",\n            \"comment_count\": 0,\n            \"modified_text\": \"28 days ago \",\n            \"upvotes_count\": 0,\n            \"follower_count\": 0,\n            \"is_subscribing\": null,\n            \"downvotes_count\": 0,\n            \"indicator_count\": 12,\n            \"validator_count\": 0,\n            \"malware_families\": [\n              {\n                \"id\": \"Agent Tesla\",\n                \"target\": null,\n                \"display_name\": \"Agent Tesla\"\n              }\n            ],\n            \"subscriber_count\": 171107,\n            \"targeted_countries\": [],\n            \"indicator_type_counts\": {\n              \"URL\": 6,\n              \"IPv4\": 2,\n              \"FileHash-MD5\": 1,\n              \"FileHash-SHA1\": 1,\n              \"FileHash-SHA256\": 2\n            },\n            \"related_indicator_type\": \"URL\",\n            \"threat_hunter_scannable\": true,\n            \"threat_hunter_has_agents\": 1,\n            \"related_indicator_is_active\": 1\n          }\n        ],\n        \"related\": {\n          \"other\": {\n            \"adversary\": [],\n            \"industries\": [],\n            \"malware_families\": [],\n            \"unique_indicators\": 0\n          },\n          \"alienvault\": {\n            \"adversary\": [],\n            \"industries\": [],\n            \"malware_families\": [\n              \"Agent tesla\"\n            ],\n            \"unique_indicators\": 12\n          }\n        },\n        \"references\": [\n          \"https:\/\/www.fortinet.com\/blog\/threat-research\/phishing-campaign-targeting-korean-to-deliver-agent-tesla-new-variant\"\n        ]\n      },\n      \"type_title\": \"URL\",\n      \"validation\": [\n        {\n          \"name\": \"Whitelisted domain\",\n          \"source\": \"whitelist\",\n          \"message\": \"Whitelisted domain blogspot.com\"\n        },\n        {\n          \"name\": \"Whitelisted domain\",\n          \"source\": \"majestic\",\n          \"message\": \"Whitelisted domain blogspot.com\"\n        }\n      ],\n      \"base_indicator\": {\n        \"id\": 3328915728,\n        \"type\": \"URL\",\n        \"title\": \"\",\n        \"content\": \"\",\n        \"indicator\": \"https:\/\/onedayiwillloveyouforever.blogspot.com\/p\/divine111.html\",\n        \"access_type\": \"public\",\n        \"description\": \"\",\n        \"access_reason\": \"\"\n      },\n      \"false_positive\": []\n    },\n    \"url_list\": {\n      \"city\": null,\n      \"region\": null,\n      \"charset\": 0,\n      \"net_loc\": \"onedayiwillloveyouforever.blogspot.com\",\n      \"dma_code\": 0,\n      \"flag_url\": \"\/assets\/images\/flags\/us.png\",\n      \"latitude\": 37.751,\n      \"url_list\": [\n        {\n          \"gsb\": [],\n          \"url\": \"https:\/\/onedayiwillloveyouforever.blogspot.com\/p\/divine111.html\",\n          \"date\": \"2021-12-13T15:08:32\",\n          \"secs\": 1639408112,\n          \"params\": {},\n          \"result\": {\n            \"tlp\": \"WHITE\",\n            \"extractor\": {\n              \"title\": \"<title>Blog not found<\/title>\"\n            },\n            \"urlworker\": {\n              \"ip\": \"142.250.69.193\",\n              \"md5\": \"6ec59c95dc3066802e9198ef93c716c2\",\n              \"url\": \"https:\/\/onedayiwillloveyouforever.blogspot.com\/p\/divine111.html\",\n              \"cert\": {\n                \"issuer\": {\n                  \"common_name\": \"invalid2.invalid\",\n                  \"organizational_unit_name\": \"No SNI provided; please fix your client.\"\n                },\n                \"subject\": {\n                  \"common_name\": \"invalid2.invalid\",\n                  \"organizational_unit_name\": \"No SNI provided; please fix your client.\"\n                },\n                \"signature\": \"B9D9E2545CF561ED69F3B863ED035A9E2A81275A1B28334BFC2D7113FE4B657E1C53827980E6799F6AB345A9365AEDC9E04ACC11FC84EB7DCBC6946D9070D8CD45D8C8B6DD0F9D8401147D008E29B213B6E9C1B957C34D36C01D4B8D97F7B2AFBF2FF04822D77DF3EF3560C9D546D4A03400E48207E07AE6095BA71FB1302A6064BBB1F531F2770837B4FA3F2DF61B442A1FF8C6FC23764263D3BA15F6468EEC499FED2EC77483A2B6B7357FC5989FA2913093B0CB48156847DE1A326006A638EB884E93D91C3EF23F495F6EE9DC18312A010BB66166D8C518B17EAD954B182F8166C572692004B62913C883593DCA765BA8D7EE8F1DA0DA2E0D9269C398E86A\",\n                \"extensions\": {\n                  \"keyUsage\": \"Digital Signature, Key Encipherment, Certificate Sign\",\n                  \"basicConstraints\": \"CA:TRUE\",\n                  \"extendedKeyUsage\": \"TLS Web Server Authentication, TLS Web Client Authentication\",\n                  \"subjectKeyIdentifier\": \"BB:0F:38:96:6F:3E:BE:4F:2B:46:D0:41:6A:D4:AC:B5\"\n                },\n                \"is_expired\": false,\n                \"issuer_str\": \"Common Name: invalid2.invalid, Organizational Unit: No SNI provided; please fix your client.\",\n                \"public_key\": \"CD624FE5C31384980C05E4EF44A2A5ECDE9971901B283540B4D04D9D18488128AD5F10B32ADB7DAE9D911E42E7EFAA198DD34EDB910FA7E420322594FEB924074D18D7C39A870E5F8BCB3E2BD751BFA8BE8123A2BF68E521E5BF4B484EB305140C7D095C59043CA20BCE997930BEF0769E64B7DDEF1F16BB1ECC0EB40C44CF65ADC4C75ECE6FF70A03B7B25B36D309775B4DE223E902B7B1F2BE11B2D9A44F2E125F78006942BD1492EDEAEA6B689B2D9C8056B07A437F5FF687F0A9275FBF7D30F72E5AEB4CDAAF3C9AD50406CB999B2DA7B232BD27BFF28610910F3395FF263C739FA5FEEFEB5AEC30919DA58331A9E310417E15DDAFAFA6F649B0582526F5\",\n                \"subject_str\": \"Common Name: invalid2.invalid, Organizational Unit: No SNI provided; please fix your client.\",\n                \"x509_version\": \"v3\",\n                \"serial_number\": \"90768918E93393A0\",\n                \"signature_str\": \"B9 D9 E2 54 5C F5 61 ED 69 F3 B8 63 ED 03 5A 9E 2A 81 27 5A 1B 28 33\\n4B FC 2D 71 13 FE 4B 65 7E 1C 53 82 79 80 E6 79 9F 6A B3 45 A9 36 5A\\nED C9 E0 4A CC 11 FC 84 EB 7D CB C6 94 6D 90 70 D8 CD 45 D8 C8 B6 DD\\n0F 9D 84 01 14 7D 00 8E 29 B2 13 B6 E9 C1 B9 57 C3 4D 36 C0 1D 4B 8D\\n97 F7 B2 AF BF 2F F0 48 22 D7 7D F3 EF 35 60 C9 D5 46 D4 A0 34 00 E4\\n82 07 E0 7A E6 09 5B A7 1F B1 30 2A 60 64 BB B1 F5 31 F2 77 08 37 B4\\nFA 3F 2D F6 1B 44 2A 1F F8 C6 FC 23 76 42 63 D3 BA 15 F6 46 8E EC 49\\n9F ED 2E C7 74 83 A2 B6 B7 35 7F C5 98 9F A2 91 30 93 B0 CB 48 15 68\\n47 DE 1A 32 60 06 A6 38 EB 88 4E 93 D9 1C 3E F2 3F 49 5F 6E E9 DC 18\\n31 2A 01 0B B6 61 66 D8 C5 18 B1 7E AD 95 4B 18 2F 81 66 C5 72 69 20\\n04 B6 29 13 C8 83 59 3D CA 76 5B A8 D7 EE 8F 1D A0 DA 2E 0D 92 69 C3\\n98 E8 6A\",\n                \"extensions_str\": \"Extension 1, name=keyUsage, value=Digital Signature, Key Encipherment, Certificate Sign\\nExtension 2, name=extendedKeyUsage, value=TLS Web Server Authentication, TLS Web Client Authentication\\nExtension 3, name=basicConstraints, value=CA:TRUE\\nExtension 4, name=subjectKeyIdentifier, value=BB:0F:38:96:6F:3E:BE:4F:2B:46:D0:41:6A:D4:AC:B5\",\n                \"is_self_issued\": true,\n                \"is_self_signed\": \"maybe\",\n                \"public_key_str\": \"CD 62 4F E5 C3 13 84 98 0C 05 E4 EF 44 A2 A5 EC DE 99 71 90 1B 28 35\\n40 B4 D0 4D 9D 18 48 81 28 AD 5F 10 B3 2A DB 7D AE 9D 91 1E 42 E7 EF\\nAA 19 8D D3 4E DB 91 0F A7 E4 20 32 25 94 FE B9 24 07 4D 18 D7 C3 9A\\n87 0E 5F 8B CB 3E 2B D7 51 BF A8 BE 81 23 A2 BF 68 E5 21 E5 BF 4B 48\\n4E B3 05 14 0C 7D 09 5C 59 04 3C A2 0B CE 99 79 30 BE F0 76 9E 64 B7\\nDD EF 1F 16 BB 1E CC 0E B4 0C 44 CF 65 AD C4 C7 5E CE 6F F7 0A 03 B7\\nB2 5B 36 D3 09 77 5B 4D E2 23 E9 02 B7 B1 F2 BE 11 B2 D9 A4 4F 2E 12\\n5F 78 00 69 42 BD 14 92 ED EA EA 6B 68 9B 2D 9C 80 56 B0 7A 43 7F 5F\\nF6 87 F0 A9 27 5F BF 7D 30 F7 2E 5A EB 4C DA AF 3C 9A D5 04 06 CB 99\\n9B 2D A7 B2 32 BD 27 BF F2 86 10 91 0F 33 95 FF 26 3C 73 9F A5 FE EF\\nEB 5A EC 30 91 9D A5 83 31 A9 E3 10 41 7E 15 DD AF AF A6 F6 49 B0 58\\n25 26 F5\",\n                \"not_valid_after\": \"2030-01-01T00:00:00+00:00\",\n                \"public_key_size\": 2048,\n                \"fingerprint_sha1\": \"42 59 51 7C D4 E4 8A 28 9D 33 2A B3 F0 AB 52 A3 66 32 28 24\",\n                \"not_valid_before\": \"2015-01-01T00:00:00+00:00\",\n                \"serial_number_str\": \"90 76 89 18 E9 33 93 A0\",\n                \"subject_alt_names\": [],\n                \"fingerprint_sha256\": \"D5 12 96 35 A0 50 F6 3D D6 07 FF A9 27 1E EF AA B5 97 C0 97 58 09 76 5D AD 25 39 73 FC 55 4D 25\",\n                \"not_valid_after_str\": \"2030-01-01 00:00:00+00:00\",\n                \"public_key_exponent\": 65537,\n                \"signature_algorithm\": \"sha256_rsa\",\n                \"not_valid_before_str\": \"2015-01-01 00:00:00+00:00\",\n                \"public_key_algorithm\": \"rsa\",\n                \"public_key_parameters\": null,\n                \"subject_alt_names_str\": \"\"\n              },\n              \"sha256\": \"89b41ce0a6f2296e6cd27c30f39e1ebeadfeff8e246f5e8c32a3157903bbbcd9\",\n              \"filetype\": \"text\/html\",\n              \"fileclass\": \"HTML\",\n              \"filemagic\": \"HTML document, ASCII text\",\n              \"http_code\": 404,\n              \"http_response\": {\n                \"DATE\": \"Mon, 13 Dec 2021 15:18:51 GMT\",\n                \"SERVER\": \"GSE\",\n                \"ALT-SVC\": \"h3=\\\":443\\\"; ma=2592000,h3-29=\\\":443\\\"; ma=2592000,h3-Q050=\\\":443\\\"; ma=2592000,h3-Q046=\\\":443\\\"; ma=2592000,h3-Q043=\\\":443\\\"; ma=2592000,quic=\\\":443\\\"; ma=2592000; v=\\\"46,43\\\"\",\n                \"EXPIRES\": \"Mon, 13 Dec 2021 15:18:51 GMT\",\n                \"CONTENT-TYPE\": \"text\/html; charset=UTF-8\",\n                \"CACHE-CONTROL\": \"private, max-age=0\",\n                \"X-FRAME-OPTIONS\": \"SAMEORIGIN\",\n                \"CONTENT-ENCODING\": \"gzip\",\n                \"X-XSS-PROTECTION\": \"1; mode=block\",\n                \"TRANSFER-ENCODING\": \"chunked\",\n                \"X-CONTENT-TYPE-OPTIONS\": \"nosniff\",\n                \"CONTENT-SECURITY-POLICY\": \"frame-ancestors 'self'\"\n              },\n              \"has_file_analysis\": false\n            },\n            \"safebrowsing\": {\n              \"matches\": []\n            }\n          },\n          \"checked\": 1,\n          \"httpcode\": 404,\n          \"deep_analysis\": true\n        }\n      ],\n      \"area_code\": 0,\n      \"city_data\": true,\n      \"longitude\": -97.822,\n      \"flag_title\": \"United States of America\",\n      \"postal_code\": null,\n      \"subdivision\": null,\n      \"country_code\": \"US\",\n      \"country_name\": \"United States of America\",\n      \"country_code2\": \"US\",\n      \"country_code3\": \"USA\",\n      \"continent_code\": \"NA\",\n      \"accuracy_radius\": 1000\n    }\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "ignore_errors": false,
+                "operationTitle": "Get URL Reputation",
+                "step_variables": {
+                    "otx_data": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "ed524d1e-8c79-40c6-bcba-93a602db5ae1",
+            "id": 12719
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Reputation from AlienVault OTX",
+            "targetStep": "\/api\/3\/workflow_steps\/ed524d1e-8c79-40c6-bcba-93a602db5ae1",
+            "sourceStep": "\/api\/3\/workflow_steps\/2497f6bc-b457-4999-ad5a-52139e6866c5",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "468a39c8-69ea-4e78-af47-8c47746a9805"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Results and Compute Details -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/0734a217-7d00-4035-a69b-acd1363421ff",
+            "sourceStep": "\/api\/3\/workflow_steps\/93ca069c-b9c3-4784-9b6a-7176d905ef1e",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "52bc5323-0507-4159-88dd-156ff3b0a784"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Reputation from AlienVault OTX -> Set Results and Compute Details",
+            "targetStep": "\/api\/3\/workflow_steps\/93ca069c-b9c3-4784-9b6a-7176d905ef1e",
+            "sourceStep": "\/api\/3\/workflow_steps\/ed524d1e-8c79-40c6-bcba-93a602db5ae1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6c847871-5b31-493d-bb89-c9f26ef0cff8"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "5e9163a3-5986-4ad2-b3f4-01088db3301c",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 2461,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1642583836,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1642930465,
+    "owners": [],
+    "isPrivate": false
+}
