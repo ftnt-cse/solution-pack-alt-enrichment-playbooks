@@ -23,5 +23,6 @@
     - Indicator (Type MD/SHA1/SHA256) - Get Reputation
     - Indicator (Type IP) - Get Reputation
     - Indicator (Type URL) - Get Reputation
-- Import the playbook collection Alt-Enrich-Collection.json (available here)
-- Activate the playbooks provided in this content pack
+- Download the code zip from here (code then Download Zip file)
+- Import the playbook collection via the import wizard. Browse to: **Settings -> Import Wizard** and click on **Import from file** selecting the zip file you just downloaded
+- Activate the playbooks provided in this content pack (by default all playbooks in this collection are inactive)
