@@ -4,7 +4,7 @@
 
 ![](media/ip_indicator.png)
 
-- URL
+### URL
 
 ![](media/url_indicator.png)
 
@@ -12,7 +12,7 @@
 
 ![](media/hash_indicator.png)
 
-- Domain
+### Domain
 
 ![](media/domain_indicator.png)
 
