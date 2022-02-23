@@ -1,0 +1,128 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": "> Subroutine JSON Lists to Tables",
+    "aliasName": null,
+    "tag": null,
+    "description": "Takes a list of JSON dictionaries and creates an HTML table for each",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "json_data"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/2eee6459-4cb6-4157-8a0b-b68be06d972c",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Configuration",
+            "description": null,
+            "arguments": {
+                "json_data": "{{vars.input.params['json_data']}}",
+                "columns_per_table": "13"
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ddb16aff-5a9b-4df2-bbca-f9300f3b0d45",
+            "id": 5382
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute HTML Tables",
+            "description": null,
+            "arguments": {
+                "html_report": "{%for section in vars.list_of_sections%}<div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:#22a6af;color:white;padding:5px;\">{{section.0}}<\/h2>    <p style=\"padding:1px;color:white;\">{%for sublist in section.1%}{%if sublist%}{{sublist | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=false, table_style={})}}{%endif%}{%endfor%}<\/p><\/div>{%endfor%}"
+            },
+            "status": null,
+            "top": "436",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "2ca69b63-7c80-4418-ba52-3b66ad8c7228",
+            "id": 5383
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "json_data": "[]",
+                    "section_name": "",
+                    "list_of_lists": "[]",
+                    "list_of_sections": "[]"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "2eee6459-4cb6-4157-8a0b-b68be06d972c",
+            "id": 5384
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Lists of Lists",
+            "description": null,
+            "arguments": {
+                "__temp0": "{%for section in vars.json_data%}\n{%set tmp_lists=[]%}\n{%for line in section.1.items()|batch(vars.columns_per_table)%}\n{{tmp_lists.append(dict(line))}}{%endfor%}\n{{vars.list_of_sections.append([section.0,tmp_lists])}}\n{%endfor%}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "4aee6782-5030-4286-8ff3-c4cce04316ba",
+            "id": 5385
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Configuration",
+            "targetStep": "\/api\/3\/workflow_steps\/ddb16aff-5a9b-4df2-bbca-f9300f3b0d45",
+            "sourceStep": "\/api\/3\/workflow_steps\/2eee6459-4cb6-4157-8a0b-b68be06d972c",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6ac49a43-965e-42b2-8a1e-aaf4f09e373e"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Lists of Lists -> Compute HTML Tables",
+            "targetStep": "\/api\/3\/workflow_steps\/2ca69b63-7c80-4418-ba52-3b66ad8c7228",
+            "sourceStep": "\/api\/3\/workflow_steps\/4aee6782-5030-4286-8ff3-c4cce04316ba",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "fe79c935-e5d3-4af8-83da-72efa0a771c7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Configuration -> Compute Lists of Lists",
+            "targetStep": "\/api\/3\/workflow_steps\/4aee6782-5030-4286-8ff3-c4cce04316ba",
+            "sourceStep": "\/api\/3\/workflow_steps\/ddb16aff-5a9b-4df2-bbca-f9300f3b0d45",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "609b7398-c2ee-4e3e-a4da-e4f427ca40d9"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "21f19255-cc68-4f68-9cc7-55d3996d3d77",
+    "recordTags": [
+        "Utility"
+    ],
+    "id": 1271,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}

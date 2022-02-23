@@ -1,0 +1,230 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Get VirusTotal Reputation for URL",
+    "aliasName": null,
+    "tag": null,
+    "description": "Input is URL, Output is HTML reputation details and HTML score and Integer score",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "MockOutput",
+        "URL"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/70e819ec-4099-4fd6-a7ca-7909248cd0cd",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get URL Reputation from VT",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "1ba6a7ef-304a-4f78-855d-70b09bcd0b0a",
+                "params": {
+                    "url": "{{vars.record}}",
+                    "relationships": ""
+                },
+                "version": "2.2.0",
+                "connector": "virustotal",
+                "operation": "query_url",
+                "operationTitle": "Get URL Reputation",
+                "step_variables": {
+                    "tags": "{{vars.result.data.attributes['tags']}}",
+                    "categories": "{{vars.result.data.attributes['categories']}}",
+                    "threat_names": "{{vars.result.data.attributes['threat_names']}}",
+                    "vt_attributes": "{{vars.result.data.attributes}}",
+                    "community_votes": "{{vars.result.data.attributes['total_votes']}}",
+                    "last_analysis_stats": "{{vars.result.data.attributes['last_analysis_stats']}}"
+                },
+                "operationOutput": {
+                    "scans": [],
+                    "total": "",
+                    "scan_id": "",
+                    "resource": "",
+                    "aggregate": "",
+                    "permalink": "",
+                    "positives": "",
+                    "scan_date": "",
+                    "verbose_msg": ""
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "a1af46af-db0d-403a-b154-53ec07870252",
+            "id": 5507
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "vt_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">VirusTotal Threat Intel<\/h4><\/div>{{vars.vt_summary_report}}\n{%for section in vars.list_of_lists%}<div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">{{section.0}}<\/h2>    <p style=\"padding:1px;color:white;\">{{section.1 | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=false, table_style={'th':'background-color:{{vars.table_color}} !important;'})}}<\/p><\/div>{%endfor%}",
+                "vt_score": "{{vars.vt_score}}",
+                "vt_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n  <tr><td>\n  <table style=\"color:white;font-size:11;\" >\n  <tr>\n  <td>\n  <html>\n    <head>\n      <title>Title of the document<\/title>\n      <style>\n        span.circle {\n          background: #2f3f51;\n          border-radius: 50%;\n          -moz-border-radius: 50%;\n          -webkit-border-radius: 50%;\n          display: inline-block;\n           font-weight: bold;\n          line-height: 70px;\n          margin-right: 5px;\n          text-align: center;\n          width: 100px;\n        font-size:15px;\n       border-color: Black;\n        }\n      <\/style>\n    <\/head>\n    <body><span class=\"circle\"><i style=\"font-size:46px;color:red \"> {{vars.vt_score}}<\/i><\/span>\n  <br>\n     <center>VirusTotal<\/center>\n    <\/body>\n  <\/html>\n  <\/td><\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "816425ff-57cd-4106-80b9-d5794b94ce5a",
+            "id": 5508
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params.URL}}",
+                    "format_red": "<span style=\"color:Red;font-weight:bold;font-size:120%;\">{}<\/span>",
+                    "table_color": "#22a6af",
+                    "format_green": "<span style=\"color:yellowgreen\">{}<\/span>",
+                    "generic_info": "{}",
+                    "list_of_lists": "[]",
+                    "useMockOutput": "{{vars.input.params.MockOutput or False}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "70e819ec-4099-4fd6-a7ca-7909248cd0cd",
+            "id": 5509
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Reports",
+            "description": null,
+            "arguments": {
+                "vt_score": "{%if vars.vt_attributes.last_analysis_stats.malicious == 0%}{{vars.vt_attributes.last_analysis_stats.suspicious}}{%else%}{{vars.vt_attributes.last_analysis_stats.malicious}}{%endif%}",
+                "vt_summary_report": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n<tr><td>\n<table style=\"color:white;font-size:11;\" >\n<tr>\n<td>\n<html>\n  <head>\n    <title>Title of the document<\/title>\n    <style>\n      span.circle {\n        background: #2f3f51;\n        border-radius: 50%;\n        -moz-border-radius: 50%;\n        -webkit-border-radius: 50%;\n        display: inline-block;\n         font-weight: bold;\n        line-height: 100px;\n        margin-right: 5px;\n        text-align: center;\n        width: 100px;\n      font-size:15px;\n     border-color: Black;\n      }\n    <\/style>\n  <\/head>\n  <body><span class=\"circle\"><i style=\"font-size:25px;color:red \">\n   {{vars.last_analysis_stats.malicious}}<\/i>\/{{vars.last_analysis_stats.values() | list | sum}}<\/span>\n  <\/body>\n<\/html>\n<\/td>\n\n<td>\n<div class=\"font-size-14 ng-binding\">Malicious<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;font-size:46px;\">\n<div class=\"card-number\"; style=\"font-size:45px;  border-left: 5px solid red;background:#141b23\">{{vars.last_analysis_stats.malicious}}<\/div>\n<\/div>\n<\/td>\n<td>\n<div class=\"font-size-14 ng-binding\">Suspicious<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;\">\n<div class=\"card-number\" style=\"font-size:45px;  border-left: 5px solid orange; background:#141b23\">{{vars.last_analysis_stats.suspicious}}<\/div>\n<\/div>\n<\/td>\n<td>\n<div class=\"font-size-14 ng-binding\">Harmless<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;\">\n<div class=\"card-number\" style=\"font-size:45px;  border-left: 5px solid green; background:#141b23\">{{vars.last_analysis_stats.harmless}}<\/div><\/div>\n<\/td>\n<\/tr>\n<\/table>\n\n<td style=\"vertical-align:top\">\n<table style=\"background-color: #1b2430; color:white;font-size:16;\" class=\"margin-10\">\n<tr>\n<div class=\"margin-top-md\">\n<i class=\"fa fa-group margin-left-md margin-right-sm\"><\/i> Community Votes<\/div>\n\n<td style=\"width: 100px;text-align: center;background:#141b23\">\n<i class=\"\tfa fa-thumbs-o-up\" style=\"font-size:25px;color:green\"><\/i>\n<div class=\"font-size-11 ng-binding\">Harmless {{vars.community_votes.harmless}}<\/div>\n<\/td>\n<td style=\"width: 100px;text-align: center;background:#141b23\">\n<i class=\"fa fa-thumbs-o-down\" style=\"font-size:25px;color:red \"><\/i>\n<div class=\"font-size-11 ng-binding\">Malicious {{vars.community_votes.malicious}}<\/div>\n<\/td>\n<\/tr>\n<\/table>\n<\/div>\n<\/td>\n<\/tr>\n<\/table>",
+                "__tmp_update_lists": "{%for k,v in vars.vt_attributes.items()%}{%if k in ['categories','last_http_response_headers']%}\n{%if v|length > 0%}\n{%for item,value in v.items()%}\n{%if value|length > 30%}{{v.update({item:value.replace(';','<br>')})}}{%endif%}\n{%endfor%}\n{{vars.list_of_lists.append([k.replace('_',' ').capitalize(),v])}}\n{%endif%}\n{%endif%}\n{%endfor%}",
+                "__tmp_last_submited": "#Parse relevant fields and add them to the list of lists#\n{%for k,v in vars.vt_attributes.items()%}\n{%if k in ['title','times_submitted','last_analysis_date','last_submission_date','first_submission_date','last_modification_date','threat_names']%}\n{%if 'date' in k%}\n{{vars.generic_info.update({k.replace('_',' ').capitalize():arrow.get(v).to(\"UTC\").format(\"YYYY-MM-DD HH:mm:ss ZZ\")})}}\n{%elif k == 'threat_names' and v|length > 0%}\n{{vars.generic_info.update({k.replace('_',' ').capitalize():v.0})}}\n{%else%}\n{{vars.generic_info.update({k.replace('_',' ').capitalize():v})}}\n{%endif%}\n{%endif%}\n{%endfor%}\n{{vars.list_of_lists.append(['Generic Info',vars.generic_info])}}",
+                "__tmp_last_analysts_res": "{%set undetected={}%}\n{%set detected={}%}\n{%set others={}%}\n{%for k,v in vars.vt_attributes.last_analysis_results.items()%}\n{%if 'alicious' in v.category%}\n{{detected.update({k:vars.format_red.format(v.category+' : '+(v.result|string))})}}\n{%elif 'harmless' in v.category%}%}\n{{undetected.update({k:vars.format_green.format(v.category+' : '+(v.result|string))})}}\n{%else%}\n{{others.update({k:v.category+' : '+(v.result|string)})}}\n{%endif%}\n{%endfor%}\n{%set tmp_json=detected|combine(undetected)|combine(others)%}\n{%if tmp_json%}\n{{vars.list_of_lists.append(['Analysis Results',tmp_json])}}\n{%endif%}"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "6eaa6ef3-d398-4854-8e0c-6ae02f810423",
+            "id": 5510
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Stop Playbook",
+            "description": null,
+            "arguments": {
+                "params": [],
+                "version": "3.1.2",
+                "connector": "cyops_utilities",
+                "operation": "no_op",
+                "operationTitle": "Utils: No Operation",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "0c99e845-1f93-40f6-a3ed-38619a7681da",
+            "id": 5511
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is in DB",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/6eaa6ef3-d398-4854-8e0c-6ae02f810423",
+                        "condition": "{{ 'code' not in vars.steps.Get_URL_Reputation_from_VT.data }}",
+                        "step_name": "Compute Reports"
+                    },
+                    {
+                        "option": "no",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/0c99e845-1f93-40f6-a3ed-38619a7681da",
+                        "step_name": "Stop Playbook"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "300",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "f9a05ec7-3446-4707-91f0-95a96b88969b",
+            "id": 5512
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is in DB -> Stop Playbook",
+            "targetStep": "\/api\/3\/workflow_steps\/0c99e845-1f93-40f6-a3ed-38619a7681da",
+            "sourceStep": "\/api\/3\/workflow_steps\/f9a05ec7-3446-4707-91f0-95a96b88969b",
+            "label": "no",
+            "isExecuted": false,
+            "uuid": "fe88734d-2567-4044-915e-8a61d3937fcc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Reports -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/816425ff-57cd-4106-80b9-d5794b94ce5a",
+            "sourceStep": "\/api\/3\/workflow_steps\/6eaa6ef3-d398-4854-8e0c-6ae02f810423",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "1b5629a0-eade-4d19-8290-8fb8f1c2a5d8"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get URL Reputation from VT",
+            "targetStep": "\/api\/3\/workflow_steps\/a1af46af-db0d-403a-b154-53ec07870252",
+            "sourceStep": "\/api\/3\/workflow_steps\/70e819ec-4099-4fd6-a7ca-7909248cd0cd",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "9ef6622f-c6b8-4a94-9bdd-87567d5d377c"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is in DB -> Compute Reports",
+            "targetStep": "\/api\/3\/workflow_steps\/6eaa6ef3-d398-4854-8e0c-6ae02f810423",
+            "sourceStep": "\/api\/3\/workflow_steps\/f9a05ec7-3446-4707-91f0-95a96b88969b",
+            "label": "yes",
+            "isExecuted": false,
+            "uuid": "1351b6a0-9df5-4f12-96aa-579936712710"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get URL Reputation from VT -> Is in DB",
+            "targetStep": "\/api\/3\/workflow_steps\/f9a05ec7-3446-4707-91f0-95a96b88969b",
+            "sourceStep": "\/api\/3\/workflow_steps\/a1af46af-db0d-403a-b154-53ec07870252",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "517a3fa0-e162-40c1-b3f1-d1b86c9abe4f"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "88ca7a1d-2f91-4d00-89b2-f0192e8a9c0e",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 1283,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}

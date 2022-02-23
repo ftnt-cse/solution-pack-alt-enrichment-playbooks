@@ -1,0 +1,148 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Get AlienVault Reputation for IP Address",
+    "aliasName": null,
+    "tag": null,
+    "description": "Input is IP Address, Output is HTML reputation details and HTML score and Integer score",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "ip_address",
+        "MockOutput"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/e248e7be-1148-4c2d-bb69-e36ed518a129",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Reputation from AlienVault OTX",
+            "description": null,
+            "arguments": {
+                "name": "AlienVault-OTX",
+                "config": "3d96900a-f870-4ac6-94d0-00865dbaf86f",
+                "params": {
+                    "page": 1,
+                    "limit": 10,
+                    "user_text": "{{vars.record}}"
+                },
+                "version": "1.0.1",
+                "connector": "alienvault-otx",
+                "operation": "search_pulses",
+                "mock_result": "{\n  \"data\": {\n    \"next\": null,\n    \"count\": 6,\n    \"results\": [\n      {\n        \"id\": \"60637f141cda4877a64d0872\",\n        \"TLP\": \"green\",\n        \"name\": \"LCIA:HoneyNet:2021\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"111524\",\n          \"username\": \"ladarrellmiller\",\n          \"avatar_url\": \"https:\/\/otx.alienvault.com\/assets\/images\/default-avatar.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2021-03-30T19:42:12.253000\",\n        \"in_group\": false,\n        \"modified\": \"2022-01-06T13:01:41.841000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"ladarrellmiller\",\n        \"description\": \"Louisiana Cyber Investigators Alliance (LCIA): HoneyPot Suricata Log: 2021 A unified coordinated group of federal, state, local law enforcement, as well as LA ESF-17 members, focused onsafeguarding Louisiana's networks through collaborative vigilance and thorough investigations http:\/\/www.la-safe.org\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      },\n      {\n        \"id\": \"6146e0e8a6289a9c1b4cfcf7\",\n        \"TLP\": \"green\",\n        \"name\": \"LCIA:HoneyNet:2021\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"132921\",\n          \"username\": \"dm_lacia\",\n          \"avatar_url\": \"https:\/\/otx.alienvault.com\/assets\/images\/default-avatar.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2021-09-19T07:04:08.836000\",\n        \"in_group\": false,\n        \"modified\": \"2022-01-06T13:01:41.841000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"dm_lacia\",\n        \"description\": \"Louisiana Cyber Investigators Alliance (LCIA): HoneyPot Suricata Log: 2021 A unified coordinated group of federal, state, local law enforcement, as well as LA ESF-17 members, focused onsafeguarding Louisiana's networks through collaborative vigilance and thorough investigations http:\/\/www.la-safe.org\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      },\n      {\n        \"id\": \"61a70f813eceb582be551305\",\n        \"TLP\": \"green\",\n        \"name\": \"LCIA:HoneyNet:December 2021\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"111524\",\n          \"username\": \"ladarrellmiller\",\n          \"avatar_url\": \"https:\/\/otx.alienvault.com\/assets\/images\/default-avatar.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2021-12-01T06:00:33.090000\",\n        \"in_group\": false,\n        \"modified\": \"2022-01-06T13:01:41.841000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"ladarrellmiller\",\n        \"description\": \"Louisiana Cyber Investigators Alliance (LCIA): HoneyPot Suricata Log: 2021 A unified coordinated group of federal, state, local law enforcement, as well as LA ESF-17 members, focused onsafeguarding Louisiana's networks through collaborative vigilance and thorough investigations http:\/\/www.la-safe.org\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      },\n      {\n        \"id\": \"61a70f8903f0b07629aa8abc\",\n        \"TLP\": \"green\",\n        \"name\": \"LCIA:HoneyNet:December 2021\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"132921\",\n          \"username\": \"dm_lacia\",\n          \"avatar_url\": \"https:\/\/otx.alienvault.com\/assets\/images\/default-avatar.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2021-12-01T06:00:41.128000\",\n        \"in_group\": false,\n        \"modified\": \"2022-01-06T13:01:41.841000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"dm_lacia\",\n        \"description\": \"Louisiana Cyber Investigators Alliance (LCIA): HoneyPot Suricata Log: 2021 A unified coordinated group of federal, state, local law enforcement, as well as LA ESF-17 members, focused onsafeguarding Louisiana's networks through collaborative vigilance and thorough investigations http:\/\/www.la-safe.org\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      },\n      {\n        \"id\": \"61cf09538acdb977035f7aa2\",\n        \"TLP\": \"green\",\n        \"name\": \"IOCs - 20211231532 - ANIA Threat Feeds - IP Segment 3\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"91912\",\n          \"username\": \"AlessandroFiori\",\n          \"avatar_url\": \"\/otxapi\/users\/avatar_image\/media\/avatars\/user_91912\/resized\/80\/avatar_2b1b2b88b6.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2021-12-31T13:44:51.072000\",\n        \"in_group\": false,\n        \"modified\": \"2021-12-31T13:44:51.072000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"AlessandroFiori\",\n        \"description\": \"ANIA Collector - Advanced Network Interactive Analysis Collector - Collected from Internet Storm Center IOCs List\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      },\n      {\n        \"id\": \"61d0cddf4ce5d724cf269105\",\n        \"TLP\": \"green\",\n        \"name\": \"IOCs - 2022111346 - ANIA Threat Feeds - IP Segment 3\",\n        \"tags\": [],\n        \"author\": {\n          \"id\": \"91912\",\n          \"username\": \"AlessandroFiori\",\n          \"avatar_url\": \"\/otxapi\/users\/avatar_image\/media\/avatars\/user_91912\/resized\/80\/avatar_2b1b2b88b6.png\",\n          \"is_following\": false,\n          \"is_subscribed\": false\n        },\n        \"groups\": [],\n        \"public\": 1,\n        \"created\": \"2022-01-01T21:55:43.528000\",\n        \"in_group\": false,\n        \"modified\": \"2022-01-01T21:55:43.528000\",\n        \"revision\": 1,\n        \"adversary\": \"\",\n        \"attack_ids\": [],\n        \"industries\": [],\n        \"references\": [],\n        \"author_name\": \"AlessandroFiori\",\n        \"description\": \"ANIA Collector - Advanced Network Interactive Analysis Collector - Collected from Internet Storm Center IOCs List\",\n        \"is_subscribing\": null,\n        \"malware_families\": [],\n        \"targeted_countries\": []\n      }\n    ],\n    \"previous\": null,\n    \"exact_match\": \"ip\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "ignore_errors": false,
+                "operationTitle": "Search Pulses",
+                "step_variables": {
+                    "otx_data": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "b8b1132b-9c99-43aa-aa01-6054c910fa9b",
+            "id": 5513
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params['ip_address']}}",
+                    "output_list": "{}",
+                    "table_color": "#22a6af",
+                    "useMockOutput": "{{vars.input.params.MockOutput or False}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "e248e7be-1148-4c2d-bb69-e36ed518a129",
+            "id": 5514
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "otx_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">AlienVault OTX<\/h4><\/div><div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">Record Details<\/h2>    <p style=\"padding:1px;color:white;\">\n{{vars.output_list|json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=true, table_style={'th':'background-color:#22a6af !important;'})}}<\/p><\/div>",
+                "otx_score": "{{vars.otx_data.count}}",
+                "otx_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n<tr><td>\n<table style=\"color:white;font-size:11;\" >\n<tr>\n<td>\n<html>\n  <head>\n    <title>Title of the document<\/title>\n    <style>\n      span.circle {\n        background: #2f3f51;\n        border-radius: 50%;\n        -moz-border-radius: 50%;\n        -webkit-border-radius: 50%;\n        display: inline-block;\n         font-weight: bold;\n        line-height: 70px;\n        margin-right: 5px;\n        text-align: center;\n        width: 100px;\n      font-size:15px;\n     border-color: Black;\n      }\n    <\/style>\n  <\/head>\n  <body><span class=\"circle\"><i style=\"font-size:46px;color:red \">\n    {{vars.otx_data.count}}<\/i><\/span>\n<br>\n   <center>AlienVault OTX<\/center>\n  <\/body>\n<\/html>\n<\/td>\n<\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "c928af23-3836-4816-b5bc-040f0d56bd1f",
+            "id": 5515
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Set Results and Compute Details",
+            "description": null,
+            "arguments": {
+                "__tmp0": "{%set tmp_list = vars.otx_data|json_query('results[].[TLP,name]')%}{%if tmp_list|length > 0%}{%for entries in tmp_list%}{{vars.output_list.update({entries.0:entries.1})}}{%endfor%}{%endif%}",
+                "__tmp1": "{{vars.output_list.update({'score':vars.otx_data.count})}}",
+                "__tmp2": "{%set tmp_list = vars.otx_data|json_query('results[].[description,adversary]')%}{%if tmp_list|length > 0%}{%for entries in tmp_list%}{{vars.output_list.update({'description':entries.0})}}{{vars.output_list.update({'adversary':entries.1})}}{%endfor%}{%endif%}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "bba84d4d-facf-4daf-b9e5-a31e521bb418",
+            "id": 5516
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Reputation from AlienVault OTX -> Set Results and Compute Details",
+            "targetStep": "\/api\/3\/workflow_steps\/bba84d4d-facf-4daf-b9e5-a31e521bb418",
+            "sourceStep": "\/api\/3\/workflow_steps\/b8b1132b-9c99-43aa-aa01-6054c910fa9b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "750d2abd-33ad-413c-b3f5-465bb70b19bb"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Set Results and Compute Details -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/c928af23-3836-4816-b5bc-040f0d56bd1f",
+            "sourceStep": "\/api\/3\/workflow_steps\/bba84d4d-facf-4daf-b9e5-a31e521bb418",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "c2d94b01-ce97-4f5d-a897-18a8d7621799"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Reputation from AlienVault OTX",
+            "targetStep": "\/api\/3\/workflow_steps\/b8b1132b-9c99-43aa-aa01-6054c910fa9b",
+            "sourceStep": "\/api\/3\/workflow_steps\/e248e7be-1148-4c2d-bb69-e36ed518a129",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "054a0332-f8fd-4357-8695-21e685d50e73"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "9da329ef-7b8e-44ec-aed1-1cd41f9bd1a8",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 1284,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}

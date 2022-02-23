@@ -1,0 +1,213 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Emailrep Email CTI Formatter",
+    "aliasName": null,
+    "tag": null,
+    "description": "Get and Format Email CTI from EmailRep",
+    "isActive": true,
+    "debug": true,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "email",
+        "MockOutput"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/39cb32ab-ebf0-4e3c-ba5c-81eae43fe524",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Emailrep Reputation",
+            "description": null,
+            "arguments": {
+                "name": "EmailRep",
+                "config": "edac143b-f608-4a64-b2d4-d02695955b89",
+                "params": {
+                    "summary": true,
+                    "emailaddress": "{{vars.record}}"
+                },
+                "version": "1.0.0",
+                "connector": "emailrep",
+                "operation": "email_reputation",
+                "mock_result": "{\n  \"data\": {\n    \"email\": \"bill@microsoft.com\",\n    \"details\": {\n      \"spam\": true,\n      \"profiles\": [\n        \"twitter\",\n        \"linkedin\"\n      ],\n      \"valid_mx\": true,\n      \"last_seen\": \"10\/08\/2021\",\n      \"spoofable\": false,\n      \"accept_all\": true,\n      \"disposable\": false,\n      \"first_seen\": \"07\/01\/2008\",\n      \"new_domain\": false,\n      \"primary_mx\": \"microsoft-com.mail.protection.outlook.com\",\n      \"spf_strict\": true,\n      \"blacklisted\": false,\n      \"data_breach\": true,\n      \"deliverable\": true,\n      \"domain_exists\": true,\n      \"free_provider\": false,\n      \"dmarc_enforced\": true,\n      \"suspicious_tld\": false,\n      \"domain_reputation\": \"high\",\n      \"credentials_leaked\": true,\n      \"malicious_activity\": false,\n      \"credentials_leaked_recent\": false,\n      \"malicious_activity_recent\": false,\n      \"days_since_domain_creation\": 11254\n    },\n    \"summary\": \"Not suspicious. This email address has been seen in 99 reputable sources on the internet, and has profiles on well known sites like Twitter and Linkedin. It has been seen in data breaches or credential leaks dating back to 07\/01\/2008, but not since 10\/08\/2021. The sender domain is highly reputable. SPF and DMARC are strictly enforced, so this email address is not spoofable. We've observed no malicious or suspicious activity from this address. \",\n    \"references\": 99,\n    \"reputation\": \"high\",\n    \"suspicious\": false\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Get Email Address Reputation",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "emailrep_data": "{{vars.result.data}}"
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "3e7232ca-0d9b-40da-8d6f-40d7d7b93ce1",
+            "id": 5527
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params['email']}}",
+                    "table_color": "#22a6af",
+                    "list_of_lists": "[]",
+                    "useMockOutput": "true",
+                    "reputation_detail": "{}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "39cb32ab-ebf0-4e3c-ba5c-81eae43fe524",
+            "id": 5528
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "emailrep_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">EmailRep Threat Intel<\/h4><\/div>\n{%for section in vars.list_of_lists%}<div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">{{section.0}}<\/h2>    <p style=\"padding:1px;color:white;\">{{section.1 | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=false, table_style={'th':'background-color:#22a6af !important;'})}}<\/p><\/div>{%endfor%}",
+                "emailrep_score": "{{vars.__tmp_compute_score}}",
+                "emailrep_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n  <tr><td>\n  <table style=\"color:white;font-size:11;\" >\n  <tr>\n  <td>\n  <html>\n    <head>\n      <title>Title of the document<\/title>\n      <style>\n        span.circle {\n          background: #2f3f51;\n          border-radius: 50%;\n          -moz-border-radius: 50%;\n          -webkit-border-radius: 50%;\n          display: inline-block;\n           font-weight: bold;\n          line-height: 70px;\n          margin-right: 5px;\n          text-align: center;\n          width: 100px;\n        font-size:15px;\n       border-color: Black;\n        }\n      <\/style>\n    <\/head>\n    <body><span class=\"circle\"><i style=\"font-size:46px;color:red \">{{vars.__tmp_compute_score}}<\/i><\/span>\n  <br>\n     <center>EmailRep<\/center>\n    <\/body>\n  <\/html>\n  <\/td><\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ce7ef5a9-5688-48a6-a150-a57fff39bc26",
+            "id": 5529
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "dummy",
+            "description": null,
+            "arguments": {
+                "resource": {
+                    "tlp": {
+                        "id": 313,
+                        "@id": "\/api\/3\/picklists\/7bff95b7-6438-4b01-b23a-0fe8cb5b33d3",
+                        "icon": null,
+                        "uuid": "7bff95b7-6438-4b01-b23a-0fe8cb5b33d3",
+                        "@type": "Picklist",
+                        "color": "#FFBF00",
+                        "display": "Amber",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/40f1345f-f679-43c0-9237-5b06edd8385f",
+                        "itemValue": "Amber",
+                        "orderIndex": 1
+                    },
+                    "value": "{{vars.record}}",
+                    "tenant": "\/api\/3\/tenants\/b3a700f7-00be-4ef9-90c6-3c8fe6e1be63",
+                    "__replace": "true",
+                    "description": "{{vars.emailrep_html}}\n\n",
+                    "filePreview": "<p>{{vars.emailrep_score_html}}<\/p>\n<p>&nbsp;<\/p>\n<p>{{vars.emailrep_score}}<\/p>",
+                    "indicatorStatus": {
+                        "id": 369,
+                        "@id": "\/api\/3\/picklists\/2f5cff61-fbff-4bb3-96be-302b78a9fb47",
+                        "icon": null,
+                        "uuid": "2f5cff61-fbff-4bb3-96be-302b78a9fb47",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "TBD",
+                        "@context": "\/api\/3\/contexts\/Picklist",
+                        "listName": "\/api\/3\/picklist_names\/e6639d57-94a9-432f-a46f-b2b530402077",
+                        "itemValue": "TBD",
+                        "orderIndex": 3
+                    },
+                    "typeofindicator": {
+                        "id": 71,
+                        "@id": "\/api\/3\/picklists\/80bd55b0-6d88-4beb-bec3-97954f261c4d",
+                        "icon": null,
+                        "uuid": "80bd55b0-6d88-4beb-bec3-97954f261c4d",
+                        "@type": "Picklist",
+                        "color": null,
+                        "display": "Email Address",
+                        "listName": "\/api\/3\/picklist_names\/50ee5bfa-e18f-49ba-8af9-dcca25b0f9c0",
+                        "itemValue": "Email Address",
+                        "orderIndex": 1
+                    }
+                },
+                "_showJson": false,
+                "operation": "Overwrite",
+                "collection": "\/api\/3\/upsert\/indicators",
+                "__recommend": [],
+                "fieldOperation": {
+                    "recordTags": "Overwrite"
+                },
+                "step_variables": []
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/2597053c-e718-44b4-8394-4d40fe26d357",
+            "uuid": "6dc8d36f-ae63-429e-9b33-6b7fc102e480",
+            "id": 5530
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Reputation Data Preprocess",
+            "description": null,
+            "arguments": {
+                "__tmp_compute_score": "{%if vars.emailrep_data.suspicious or vars.reputation_detail.spam%}10{%elif vars.emailrep_data.reputation == 'none'%}8{%elif vars.emailrep_data.reputation == 'low'%}5{%elif vars.emailrep_data.reputation == 'medium'%}2{%elif vars.emailrep_data.reputation == 'high'%}0{%endif%}",
+                "__tmp_populate_lists": "{%if vars.emailrep_data%}\n{% set rep_details=vars.reputation_detail.update(vars.emailrep_data.details)%}\n{% set _tmp0=vars.emailrep_data.pop('details')%}\n{% set tmp_desc=vars.emailrep_data.summary.replace(',','.').replace('.','<br>')%}\n{% set _tmp1=vars.emailrep_data.update({'summary':tmp_desc})%}\n{{vars.list_of_lists.append(['EmailRep Summary',vars.emailrep_data])}}\n{{vars.list_of_lists.append(['EmailRep Details',vars.reputation_detail])}}\n{%endif%}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "d5428394-8c4c-4f52-a30a-99b481f056a6",
+            "id": 5531
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Reputation Data Preprocess -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/ce7ef5a9-5688-48a6-a150-a57fff39bc26",
+            "sourceStep": "\/api\/3\/workflow_steps\/d5428394-8c4c-4f52-a30a-99b481f056a6",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "a8c561c6-0bce-4d65-9ac5-fb0e21e0037a"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get Emailrep Reputation -> Reputation Data Preprocess",
+            "targetStep": "\/api\/3\/workflow_steps\/d5428394-8c4c-4f52-a30a-99b481f056a6",
+            "sourceStep": "\/api\/3\/workflow_steps\/3e7232ca-0d9b-40da-8d6f-40d7d7b93ce1",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4fa4e15c-2cc3-45b0-8d04-598ab18aed62"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get Emailrep Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/3e7232ca-0d9b-40da-8d6f-40d7d7b93ce1",
+            "sourceStep": "\/api\/3\/workflow_steps\/39cb32ab-ebf0-4e3c-ba5c-81eae43fe524",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "6bc1925e-9e5b-47f3-a6cf-561e373f4176"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "c85567ca-d53e-46e4-bf41-2591178c9379",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 1287,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}

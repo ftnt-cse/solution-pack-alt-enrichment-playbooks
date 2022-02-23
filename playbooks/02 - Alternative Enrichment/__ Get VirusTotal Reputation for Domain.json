@@ -1,0 +1,234 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Get VirusTotal Reputation for Domain",
+    "aliasName": null,
+    "tag": null,
+    "description": "Input is Domain, Output is HTML reputation details and HTML score and Integer score",
+    "isActive": true,
+    "debug": false,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "MockOutput",
+        "Domain"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/bdd4b8ff-632c-430d-9eec-d1dd2e1c79c7",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params.Domain}}",
+                    "format_red": "<span style=\"color:red\">{}<\/span>",
+                    "table_color": "#22a6af",
+                    "format_green": "<span style=\"color:yellowgreen\">{}<\/span>",
+                    "generic_info": "{}",
+                    "list_of_lists": "[]",
+                    "useMockOutput": "{{vars.input.params.MockOutput or False}}",
+                    "last_dns_records": "{}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "bdd4b8ff-632c-430d-9eec-d1dd2e1c79c7",
+            "id": 5390
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "vt_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">VirusTotal Threat Intel<\/h4><\/div>{{vars.vt_summary_report}}\n{%for section in vars.list_of_lists%}<div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">{{section.0}}<\/h2>    <p style=\"padding:1px;color:white;\">{{section.1 | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=false, table_style={'th':'background-color:{{vars.table_color}} !important;'})}}<\/p><\/div>{%endfor%}",
+                "vt_score": "{{vars.vt_score}}",
+                "vt_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n  <tr><td>\n  <table style=\"color:white;font-size:11;\" >\n  <tr>\n  <td>\n  <html>\n    <head>\n      <title>Title of the document<\/title>\n      <style>\n        span.circle {\n          background: #2f3f51;\n          border-radius: 50%;\n          -moz-border-radius: 50%;\n          -webkit-border-radius: 50%;\n          display: inline-block;\n           font-weight: bold;\n          line-height: 70px;\n          margin-right: 5px;\n          text-align: center;\n          width: 100px;\n        font-size:15px;\n       border-color: Black;\n        }\n      <\/style>\n    <\/head>\n    <body><span class=\"circle\"><i style=\"font-size:46px;color:red \"> {{vars.vt_score}}<\/i><\/span>\n  <br>\n     <center>VirusTotal<\/center>\n    <\/body>\n  <\/html>\n  <\/td><\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "571",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "0902531e-a634-418a-be86-b18be46a5973",
+            "id": 5391
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Compute Reports",
+            "description": null,
+            "arguments": {
+                "vt_score": "{%if vars.vt_attributes.last_analysis_stats.malicious == 0%}{{vars.vt_attributes.last_analysis_stats.suspicious}}{%else%}{{vars.vt_attributes.last_analysis_stats.malicious}}{%endif%}",
+                "vt_summary_report": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n<tr><td>\n<table style=\"color:white;font-size:11;\" >\n<tr>\n<td>\n<html>\n  <head>\n    <title>Title of the document<\/title>\n    <style>\n      span.circle {\n        background: #2f3f51;\n        border-radius: 50%;\n        -moz-border-radius: 50%;\n        -webkit-border-radius: 50%;\n        display: inline-block;\n         font-weight: bold;\n        line-height: 100px;\n        margin-right: 5px;\n        text-align: center;\n        width: 100px;\n      font-size:15px;\n     border-color: Black;\n      }\n    <\/style>\n  <\/head>\n  <body><span class=\"circle\"><i style=\"font-size:25px;color:red \">\n   {{vars.last_analysis_stats.malicious}}<\/i>\/{{vars.last_analysis_stats.values() | list | sum}}<\/span>\n  <\/body>\n<\/html>\n<\/td>\n\n<td>\n<div class=\"font-size-14 ng-binding\">Malicious<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;font-size:46px;\">\n<div class=\"card-number\"; style=\"font-size:45px;  border-left: 5px solid red;background:#141b23\">{{vars.last_analysis_stats.malicious}}<\/div>\n<\/div>\n<\/td>\n<td>\n<div class=\"font-size-14 ng-binding\">Suspicious<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;\">\n<div class=\"card-number\" style=\"font-size:45px;  border-left: 5px solid orange; background:#141b23\">{{vars.last_analysis_stats.suspicious}}<\/div>\n<\/div>\n<\/td>\n<td>\n<div class=\"font-size-14 ng-binding\">Harmless<\/div>\n<div class=\"card-container-body\" style=\"width: 100px;\">\n<div class=\"card-number\" style=\"font-size:45px;  border-left: 5px solid green; background:#141b23\">{{vars.last_analysis_stats.harmless}}<\/div><\/div>\n<\/td>\n<\/tr>\n<\/table>\n\n<td style=\"vertical-align:top\">\n<table style=\"background-color: #1b2430; color:white;font-size:16;\" class=\"margin-10\">\n<tr>\n<div class=\"margin-top-md\">\n<i class=\"fa fa-group margin-left-md margin-right-sm\"><\/i> Community Votes<\/div>\n\n<td style=\"width: 100px;text-align: center;background:#141b23\">\n<i class=\"\tfa fa-thumbs-o-up\" style=\"font-size:25px;color:green\"><\/i>\n<div class=\"font-size-11 ng-binding\">Harmless {{vars.community_votes.harmless}}<\/div>\n<\/td>\n<td style=\"width: 100px;text-align: center;background:#141b23\">\n<i class=\"fa fa-thumbs-o-down\" style=\"font-size:25px;color:red \"><\/i>\n<div class=\"font-size-11 ng-binding\">Malicious {{vars.community_votes.malicious}}<\/div>\n<\/td>\n<\/tr>\n<\/table>\n<\/div>\n<\/td>\n<\/tr>\n<\/table>",
+                "__tmp_update_lists": "{%for k,v in vars.vt_attributes.items()%}{%if k in ['categories']%}\n{%if v|length > 0%}\n{{vars.list_of_lists.append([k,v])}}\n{%endif%}\n{%endif%}\n{%endfor%}",
+                "__tmp_last_submited": "{%for k,v in vars.vt_attributes.items()%}\n{%if k in ['whois_date','creation_date','last_update_date','last_dns_records_date','last_modification_date','last_https_certificate_date']%}\n    {{vars.generic_info.update({k:arrow.get(v).to(\"UTC\").format(\"YYYY-MM-DD HH:mm:ss ZZ\")})}}\n{%elif k in ['jarm','registrar']%}\n    {{vars.generic_info.update({k:v})}}\n{%elif k == 'last_dns_records'%}\n{%for entry in v%}\n{{vars.last_dns_records.update({entry.type:entry.value})}}    \n{%endfor%}    \n{%endif%}\n{%endfor%}\n{{vars.list_of_lists.append(['Generic Info',vars.generic_info])}}\n{%if vars.last_dns_records|length > 0%}\n{{vars.list_of_lists.append(['DNS Last Records',vars.last_dns_records])}}\n{%endif%}",
+                "__tmp_last_analysts_res": "{%set tmp_json={}%}\n{%for k,v in vars.vt_attributes.last_analysis_results.items()%}\n{%if 'unrated' in v.result or 'clean' in v.result%}\n{{tmp_json.update({k:vars.format_green.format(v.result)})}}\n{%else%}\n{{tmp_json.update({k:vars.format_red.format(v.result)})}}\n{%endif%}\n{%endfor%}\n{{vars.list_of_lists.append(['Analysis Result',tmp_json])}}"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "50f34f50-d547-4dc8-b31d-b721edff6b1f",
+            "id": 5392
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Stop Playbook",
+            "description": null,
+            "arguments": {
+                "params": [],
+                "version": "3.1.2",
+                "connector": "cyops_utilities",
+                "operation": "no_op",
+                "operationTitle": "Utils: No Operation",
+                "step_variables": []
+            },
+            "status": null,
+            "top": "435",
+            "left": "475",
+            "stepType": "\/api\/3\/workflow_step_types\/0109f35d-090b-4a2b-bd8a-94cbc3508562",
+            "uuid": "8a0b29fb-99de-4ba8-ab55-a9a5fe638cf2",
+            "id": 5393
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Is in DB",
+            "description": null,
+            "arguments": {
+                "conditions": [
+                    {
+                        "option": "yes",
+                        "step_iri": "\/api\/3\/workflow_steps\/50f34f50-d547-4dc8-b31d-b721edff6b1f",
+                        "condition": "{{ 'code' not in vars.steps.Get_Domain_Reputation_from_VT.data }}",
+                        "step_name": "Compute Reports"
+                    },
+                    {
+                        "option": "no",
+                        "default": true,
+                        "step_iri": "\/api\/3\/workflow_steps\/8a0b29fb-99de-4ba8-ab55-a9a5fe638cf2",
+                        "step_name": "Stop Playbook"
+                    }
+                ]
+            },
+            "status": null,
+            "top": "300",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/12254cf5-5db7-4b1a-8cb1-3af081924b28",
+            "uuid": "ac795981-d7a0-4e18-b61b-6902b7640646",
+            "id": 5394
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Get Domain Reputation from VT",
+            "description": null,
+            "arguments": {
+                "name": "VirusTotal",
+                "config": "1ba6a7ef-304a-4f78-855d-70b09bcd0b0a",
+                "params": {
+                    "domain": "{{vars.record}}",
+                    "relationships": [
+                        "Votes"
+                    ]
+                },
+                "version": "2.2.0",
+                "connector": "virustotal",
+                "operation": "query_domain",
+                "mock_result": "{\n  \"data\": {\n    \"id\": \"milwauketools.shop\",\n    \"type\": \"domain\",\n    \"links\": {\n      \"self\": \"https:\/\/www.virustotal.com\/gui\/domain\/milwauketools.shop\"\n    },\n    \"attributes\": {\n      \"jarm\": \"27d3ed3ed0003ed1dc42d43d00041d6183ff1bfae51ebd88d70384363d525c\",\n      \"tags\": [],\n      \"whois\": {\n        \"id\": [\n          \"DO6213272-GMO\"\n        ],\n        \"raw\": [\n          \"Creation Date: 2021-10-21T13:10:59.0Z\\nDNSSEC: unsigned\\nDomain Name: MILWAUKETOOLS.SHOP\\nDomain Status: clientTransferProhibited https:\/\/icann.org\/epp#clientTransferProhibited\\nDomain Status: serverHold https:\/\/icann.org\/epp#serverHold\\nName Server: GORDON.NS.CLOUDFLARE.COM\\nName Server: VERONICA.NS.CLOUDFLARE.COM\\nRegistrant Country: US\\nRegistrant Email: 3432650ec337c945s@\\nRegistrant State\/Province: 77ab92f1911d7c5f\\nRegistrar Abuse Contact Email: abuse@dynadot.com\\nRegistrar Abuse Contact Phone: +1.6502620100\\nRegistrar IANA ID: 472\\nRegistrar URL: https:\/\/www.dynadot.com\/\\nRegistrar: Dynadot, LLC\\nRegistry Domain ID: DO6213272-GMO\\nRegistry Expiry Date: 2022-10-21T23:59:59.0Z\\nUpdated Date: 2021-10-27T09:11:33.0Z\"\n        ],\n        \"emails\": [\n          \"abuse@dynadot.com\"\n        ],\n        \"status\": [\n          \"clientTransferProhibited https:\/\/icann.org\/epp#clientTransferProhibited\",\n          \"serverHold https:\/\/icann.org\/epp#serverHold\"\n        ],\n        \"contacts\": {\n          \"tech\": null,\n          \"admin\": null,\n          \"billing\": null,\n          \"registrant\": null\n        },\n        \"registrar\": [\n          \"Dynadot, LLC\"\n        ],\n        \"nameservers\": [\n          \"gordon.ns.cloudflare.com\",\n          \"veronica.ns.cloudflare.com\"\n        ],\n        \"updated_date\": [\n          \"2021-10-27T09:11:33\"\n        ],\n        \"creation_date\": [\n          \"2021-10-21T13:10:59\"\n        ],\n        \"expiration_date\": [\n          \"2022-10-21T23:59:59\"\n        ]\n      },\n      \"registrar\": \"Dynadot, LLC\",\n      \"categories\": {\n        \"Comodo Valkyrie Verdict\": \"media sharing\",\n        \"Forcepoint ThreatSeeker\": \"newly registered websites\"\n      },\n      \"reputation\": 0,\n      \"whois_date\": 1637452327,\n      \"total_votes\": {\n        \"harmless\": 0,\n        \"malicious\": 0\n      },\n      \"creation_date\": 1634821859,\n      \"last_dns_records\": [\n        {\n          \"ttl\": 300,\n          \"type\": \"A\",\n          \"value\": \"104.21.28.101\"\n        },\n        {\n          \"ttl\": 300,\n          \"type\": \"A\",\n          \"value\": \"172.67.145.212\"\n        },\n        {\n          \"ttl\": 21600,\n          \"type\": \"NS\",\n          \"value\": \"veronica.ns.cloudflare.com\"\n        },\n        {\n          \"ttl\": 21600,\n          \"type\": \"NS\",\n          \"value\": \"gordon.ns.cloudflare.com\"\n        },\n        {\n          \"ttl\": 300,\n          \"type\": \"AAAA\",\n          \"value\": \"2606:4700:3037::ac43:91d4\"\n        },\n        {\n          \"ttl\": 3600,\n          \"type\": \"SOA\",\n          \"retry\": 2400,\n          \"rname\": \"dns.cloudflare.com\",\n          \"value\": \"gordon.ns.cloudflare.com\",\n          \"expire\": 604800,\n          \"serial\": 2038648938,\n          \"minimum\": 3600,\n          \"refresh\": 10000\n        },\n        {\n          \"ttl\": 300,\n          \"type\": \"AAAA\",\n          \"value\": \"2606:4700:3031::6815:1c65\"\n        }\n      ],\n      \"last_update_date\": 1635325893,\n      \"popularity_ranks\": {},\n      \"last_analysis_stats\": {\n        \"timeout\": 0,\n        \"harmless\": 76,\n        \"malicious\": 3,\n        \"suspicious\": 0,\n        \"undetected\": 11\n      },\n      \"last_analysis_results\": {\n        \"CRDF\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CRDF\"\n        },\n        \"Cyan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Cyan\"\n        },\n        \"DNS8\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"DNS8\"\n        },\n        \"ESET\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESET\"\n        },\n        \"Lumu\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Lumu\"\n        },\n        \"Armis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Armis\"\n        },\n        \"Avira\": {\n          \"method\": \"blacklist\",\n          \"result\": \"phishing\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"Avira\"\n        },\n        \"IPsum\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"IPsum\"\n        },\n        \"zvelo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"zvelo\"\n        },\n        \"Abusix\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Abusix\"\n        },\n        \"Dr.Web\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Dr.Web\"\n        },\n        \"G-Data\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"G-Data\"\n        },\n        \"Lionic\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Lionic\"\n        },\n        \"Sophos\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Sophos\"\n        },\n        \"Acronis\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Acronis\"\n        },\n        \"Blueliv\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Blueliv\"\n        },\n        \"Certego\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Certego\"\n        },\n        \"CyRadar\": {\n          \"method\": \"blacklist\",\n          \"result\": \"malicious\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"CyRadar\"\n        },\n        \"MalSilo\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalSilo\"\n        },\n        \"Nucleon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Nucleon\"\n        },\n        \"Quttera\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quttera\"\n        },\n        \"Segasec\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Segasec\"\n        },\n        \"Spam404\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Spam404\"\n        },\n        \"Tencent\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Tencent\"\n        },\n        \"URLhaus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"URLhaus\"\n        },\n        \"Webroot\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Webroot\"\n        },\n        \"AutoShun\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"AutoShun\"\n        },\n        \"Emsisoft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Emsisoft\"\n        },\n        \"EonScope\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EonScope\"\n        },\n        \"Fortinet\": {\n          \"method\": \"blacklist\",\n          \"result\": \"phishing\",\n          \"category\": \"malicious\",\n          \"engine_name\": \"Fortinet\"\n        },\n        \"Malwared\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Malwared\"\n        },\n        \"Netcraft\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Netcraft\"\n        },\n        \"PREBYTES\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"PREBYTES\"\n        },\n        \"Spamhaus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Spamhaus\"\n        },\n        \"VX Vault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"VX Vault\"\n        },\n        \"ViriBack\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ViriBack\"\n        },\n        \"ZeroCERT\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ZeroCERT\"\n        },\n        \"0xSI_f33d\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"0xSI_f33d\"\n        },\n        \"Antiy-AVL\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Antiy-AVL\"\n        },\n        \"CINS Army\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CINS Army\"\n        },\n        \"GreenSnow\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"GreenSnow\"\n        },\n        \"Kaspersky\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Kaspersky\"\n        },\n        \"MalBeacon\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalBeacon\"\n        },\n        \"NotMining\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"NotMining\"\n        },\n        \"OpenPhish\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"OpenPhish\"\n        },\n        \"PhishLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"PhishLabs\"\n        },\n        \"Phishtank\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishtank\"\n        },\n        \"Scantitan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Scantitan\"\n        },\n        \"Trustwave\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Trustwave\"\n        },\n        \"benkow.cc\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"benkow.cc\"\n        },\n        \"AlienVault\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AlienVault\"\n        },\n        \"CyberCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CyberCrime\"\n        },\n        \"FraudScore\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"FraudScore\"\n        },\n        \"Quick Heal\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Quick Heal\"\n        },\n        \"SafeToOpen\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"SafeToOpen\"\n        },\n        \"ThreatHive\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ThreatHive\"\n        },\n        \"ADMINUSLabs\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ADMINUSLabs\"\n        },\n        \"BitDefender\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"BitDefender\"\n        },\n        \"K7AntiVirus\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"K7AntiVirus\"\n        },\n        \"SecureBrain\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SecureBrain\"\n        },\n        \"StopBadware\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"StopBadware\"\n        },\n        \"BADWARE.INFO\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"BADWARE.INFO\"\n        },\n        \"SCUMWARE.org\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"SCUMWARE.org\"\n        },\n        \"securolytics\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"securolytics\"\n        },\n        \"Chong Lua Dao\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Chong Lua Dao\"\n        },\n        \"MalwarePatrol\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwarePatrol\"\n        },\n        \"StopForumSpam\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"StopForumSpam\"\n        },\n        \"Threatsourcing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Threatsourcing\"\n        },\n        \"EmergingThreats\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"EmergingThreats\"\n        },\n        \"desenmascara.me\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"desenmascara.me\"\n        },\n        \"Heimdal Security\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Heimdal Security\"\n        },\n        \"Sucuri SiteCheck\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Sucuri SiteCheck\"\n        },\n        \"alphaMountain.ai\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"alphaMountain.ai\"\n        },\n        \"AICC (MONITORAPP)\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"AICC (MONITORAPP)\"\n        },\n        \"Bfore.Ai PreCrime\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Bfore.Ai PreCrime\"\n        },\n        \"MalwareDomainList\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"MalwareDomainList\"\n        },\n        \"Phishing Database\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Phishing Database\"\n        },\n        \"Hoplite Industries\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Hoplite Industries\"\n        },\n        \"Web Security Guard\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Web Security Guard\"\n        },\n        \"Baidu-International\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Baidu-International\"\n        },\n        \"Google Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Google Safebrowsing\"\n        },\n        \"Yandex Safebrowsing\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Yandex Safebrowsing\"\n        },\n        \"Snort IP sample list\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Snort IP sample list\"\n        },\n        \"CMC Threat Intelligence\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"CMC Threat Intelligence\"\n        },\n        \"Comodo Valkyrie Verdict\": {\n          \"method\": \"blacklist\",\n          \"result\": \"unrated\",\n          \"category\": \"undetected\",\n          \"engine_name\": \"Comodo Valkyrie Verdict\"\n        },\n        \"Forcepoint ThreatSeeker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Forcepoint ThreatSeeker\"\n        },\n        \"malwares.com URL checker\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"malwares.com URL checker\"\n        },\n        \"ESTsecurity-Threat Inside\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"ESTsecurity-Threat Inside\"\n        },\n        \"Virusdie External Site Scan\": {\n          \"method\": \"blacklist\",\n          \"result\": \"clean\",\n          \"category\": \"harmless\",\n          \"engine_name\": \"Virusdie External Site Scan\"\n        }\n      },\n      \"last_dns_records_date\": 1634823068,\n      \"last_https_certificate\": {\n        \"size\": 1349,\n        \"tags\": [],\n        \"issuer\": {\n          \"C\": \"US\",\n          \"O\": \"Cloudflare, Inc.\",\n          \"CN\": \"Cloudflare Inc ECC CA-3\"\n        },\n        \"subject\": {\n          \"C\": \"US\",\n          \"L\": \"San Francisco\",\n          \"O\": \"Cloudflare, Inc.\",\n          \"CN\": \"sni.cloudflaressl.com\",\n          \"ST\": \"California\"\n        },\n        \"version\": \"V3\",\n        \"validity\": {\n          \"not_after\": \"2022-10-20 23:59:59\",\n          \"not_before\": \"2021-10-21 00:00:00\"\n        },\n        \"extensions\": {\n          \"CA\": true,\n          \"tags\": [],\n          \"key_usage\": [\n            \"ff\"\n          ],\n          \"extended_key_usage\": [\n            \"serverAuth\",\n            \"clientAuth\"\n          ],\n          \"certificate_policies\": [\n            \"2.23.140.1.2.2\"\n          ],\n          \"ca_information_access\": {\n            \"OCSP\": \"http:\/\/ocsp.digicert.com\",\n            \"CA Issuers\": \"http:\/\/cacerts.digicert.com\/CloudflareIncECCCA-3.crt\"\n          },\n          \"subject_key_identifier\": \"cb3037fd2446032241f23bc63a773023f30edb82\",\n          \"1.3.6.1.4.1.11129.2.4.2\": \"0482016801660076002979bef09e393921f056739f63a577e5be577d9c600af8\",\n          \"crl_distribution_points\": [\n            \"http:\/\/crl3.digicert.com\/CloudflareIncECCCA-3.crl\",\n            \"http:\/\/crl4.digicert.com\/CloudflareIncECCCA-3.crl\"\n          ],\n          \"authority_key_identifier\": {\n            \"keyid\": \"a5ce37eaebb0750e946788b445fad9241087961f\"\n          },\n          \"subject_alternative_name\": [\n            \"milwauketools.shop\",\n            \"*.milwauketools.shop\",\n            \"sni.cloudflaressl.com\"\n          ]\n        },\n        \"public_key\": {\n          \"ec\": {\n            \"oid\": \"secp256r1\",\n            \"pub\": \"0477df8bba315cf194965aa924b36187efad340f576a633279594ad9e76bde81fc2be7c67030838dba62a57005228596c55b5490870b7515f82f3dcde15c8c1346\"\n          },\n          \"algorithm\": \"EC\"\n        },\n        \"thumbprint\": \"9d50bc0ffa13112fa1cd58a8153f29b80a8f8ea0\",\n        \"serial_number\": \"ece4e489e8e0b533f4f6188df0c18e0\",\n        \"cert_signature\": {\n          \"signature\": \"3045022100aa012dcf21c5defd54c57c10f2790fa899d64cbdd68fcad886c2fba2d7bda23a022012b6d551ac9e0d9cf0f2d2ac8ff7b4f8d67de919d1a7c978bc35d3f6dae8a7b8\",\n          \"signature_algorithm\": \"sha256ECDSA\"\n        },\n        \"thumbprint_sha256\": \"520e089ced0a8676f916c8e577c4b77dbaf9278f79334a0f8288b28a7e62a9db\",\n        \"signature_algorithm\": \"sha256ECDSA\"\n      },\n      \"last_modification_date\": 1637452327,\n      \"last_https_certificate_date\": 1634823068\n    }\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Get Domain Reputation",
+                "step_variables": {
+                    "tags": "{{vars.result.data.attributes['tags']}}",
+                    "categories": "{{vars.result.data.attributes['categories']}}",
+                    "threat_names": "{{vars.result.data.attributes['threat_names']}}",
+                    "vt_attributes": "{{vars.result.data.attributes}}",
+                    "community_votes": "{{vars.result.data.attributes['total_votes']}}",
+                    "last_analysis_stats": "{{vars.result.data.attributes['last_analysis_stats']}}"
+                },
+                "operationOutput": {
+                    "scans": [],
+                    "total": "",
+                    "scan_id": "",
+                    "resource": "",
+                    "aggregate": "",
+                    "permalink": "",
+                    "positives": "",
+                    "scan_date": "",
+                    "verbose_msg": ""
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "300",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "91a78c8c-3249-4853-8404-76dd1c2bde00",
+            "id": 5395
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is in DB -> Stop Playbook",
+            "targetStep": "\/api\/3\/workflow_steps\/8a0b29fb-99de-4ba8-ab55-a9a5fe638cf2",
+            "sourceStep": "\/api\/3\/workflow_steps\/ac795981-d7a0-4e18-b61b-6902b7640646",
+            "label": "no",
+            "isExecuted": false,
+            "uuid": "d1136f35-1c75-4cbb-8c86-dfc83440be69"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> Get URL Reputation from VT",
+            "targetStep": "\/api\/3\/workflow_steps\/91a78c8c-3249-4853-8404-76dd1c2bde00",
+            "sourceStep": "\/api\/3\/workflow_steps\/bdd4b8ff-632c-430d-9eec-d1dd2e1c79c7",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "f4775d5b-3942-442e-bad6-72089a10d06b"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Get URL Reputation from VT -> Is in DB",
+            "targetStep": "\/api\/3\/workflow_steps\/ac795981-d7a0-4e18-b61b-6902b7640646",
+            "sourceStep": "\/api\/3\/workflow_steps\/91a78c8c-3249-4853-8404-76dd1c2bde00",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "ed917395-8a7d-413b-b835-97127328d910"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Compute Reports -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/0902531e-a634-418a-be86-b18be46a5973",
+            "sourceStep": "\/api\/3\/workflow_steps\/50f34f50-d547-4dc8-b31d-b721edff6b1f",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "5a49f1af-0013-413f-9a15-275de6ce8811"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Is in DB -> Compute Reports",
+            "targetStep": "\/api\/3\/workflow_steps\/50f34f50-d547-4dc8-b31d-b721edff6b1f",
+            "sourceStep": "\/api\/3\/workflow_steps\/ac795981-d7a0-4e18-b61b-6902b7640646",
+            "label": "yes",
+            "isExecuted": false,
+            "uuid": "e591eabf-5848-4582-a6dc-b76e89e94228"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "2d67cf86-b4bf-4923-9ea9-550a36717db2",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 1273,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}

@@ -1,1 +1,8 @@
-[]
+[
+    {
+        "id": 13,
+        "name": "Demo_mode",
+        "value": "false",
+        "default_value": "true"
+    }
+]

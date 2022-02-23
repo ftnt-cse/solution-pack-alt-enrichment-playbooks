@@ -1,0 +1,172 @@
+{
+    "@type": "Workflow",
+    "triggerLimit": null,
+    "name": ">> Get APIVoid Reputation for Domain",
+    "aliasName": null,
+    "tag": null,
+    "description": "Input is Domain, Output is HTML reputation details and HTML score and Integer score",
+    "isActive": true,
+    "debug": true,
+    "singleRecordExecution": false,
+    "remoteExecutableFlag": false,
+    "parameters": [
+        "Domain",
+        "MockOutput"
+    ],
+    "synchronous": false,
+    "lastModifyDate": 1645639634,
+    "collection": "\/api\/3\/workflow_collections\/610737fc-c0a1-4492-882a-822af60693c3",
+    "versions": [],
+    "triggerStep": "\/api\/3\/workflow_steps\/37e33975-72c9-480f-ac0a-a34c72c3f6fa",
+    "steps": [
+        {
+            "@type": "WorkflowStep",
+            "name": "Start",
+            "description": null,
+            "arguments": {
+                "step_variables": {
+                    "input": {
+                        "params": []
+                    },
+                    "record": "{{vars.input.params['Domain']}}",
+                    "engines": "Detection by Engine",
+                    "format_red": "<span style=\"color:Red;font-weight:bold;font-size:120%;\">{}<\/span>",
+                    "table_color": "#22a6af",
+                    "format_green": "<span style=\"color:yellowgreen\">{}<\/span>",
+                    "list_of_lists": "[]",
+                    "useMockOutput": "{{vars.input.params.MockOutput or True}}"
+                }
+            },
+            "status": null,
+            "top": "30",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/b348f017-9a94-471f-87f8-ce88b6a7ad62",
+            "uuid": "37e33975-72c9-480f-ac0a-a34c72c3f6fa",
+            "id": 5377
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Process Reputation Data",
+            "description": null,
+            "arguments": {
+                "__tmp3": "{%for k,v in vars.apivoid_data.data.report.items()%}{%if k in ['security_checks','category','server']%}{{vars.list_of_lists.append([k.replace('_',' ').capitalize(),v])}}{%endif%}{%endfor%}"
+            },
+            "status": null,
+            "top": "435",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "09748fb2-9be0-4205-808b-177772cf47cb",
+            "id": 5378
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Output Data",
+            "description": null,
+            "arguments": {
+                "apivoid_html": "<div class=\"font-size-11 ng-binding padding-bottom-sm\"><h4 style=\"background: #404142;padding: 5px;text-align: left;color: orange;background: black;\">APIVoid Threat Intel<\/h4><\/div>\n{%for section in vars.list_of_lists%}<div style=\"float:left; border:2px solid grey; margin:5px;background-color: #1b2430; color:white;font-size:16;\"><h6 style=\"background:{{vars.table_color}};color:white;padding:5px;\">{{section.0}}<\/h2>    <p style=\"padding:1px;color:white;\">{{section.1 | json2html(row_fields=[], template=\"Stylized with row selection\", display=\"Vertical\", styling=false, table_style={'th':'background-color:#22a6af !important;'})}}<\/p><\/div>{%endfor%}",
+                "apivoid_score": "{{vars.apivoid_data.data.report.blacklists.detections}}",
+                "apivoid_score_html": "<table style=\"border-color: #04080c;\" border=\"1\" class=\"font-normal\">\n  <tr><td>\n  <table style=\"color:white;font-size:11;\" >\n  <tr>\n  <td>\n  <html>\n    <head>\n      <title>Title of the document<\/title>\n      <style>\n        span.circle {\n          background: #2f3f51;\n          border-radius: 50%;\n          -moz-border-radius: 50%;\n          -webkit-border-radius: 50%;\n          display: inline-block;\n           font-weight: bold;\n          line-height: 70px;\n          margin-right: 5px;\n          text-align: center;\n          width: 100px;\n        font-size:15px;\n       border-color: Black;\n        }\n      <\/style>\n    <\/head>\n    <body><span class=\"circle\"><i style=\"font-size:46px;color:red \">{{vars.apivoid_data.data.report.blacklists.detections}}<\/i><\/span>\n  <br>\n     <center>APIVoid<\/center>\n    <\/body>\n  <\/html>\n  <\/td><\/tr>\n<\/table>\n<\/td>\n<\/tr>\n<\/table>"
+            },
+            "status": null,
+            "top": "570",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "fdc057c3-db99-4de6-935b-658f075ea06a",
+            "id": 5379
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "get Domain Reputation",
+            "description": null,
+            "arguments": {
+                "name": "apivoid",
+                "config": "72bf40d6-7ea3-42ec-bcd9-faa41834e244",
+                "params": {
+                    "req_value": "sofengo.com"
+                },
+                "version": "1.0.0",
+                "connector": "apivoid",
+                "operation": "domainbl",
+                "mock_result": "{\n  \"data\": {\n    \"result\": {\n      \"data\": {\n        \"report\": {\n          \"host\": \"{{vars.record}}\",\n          \"server\": {\n            \"ip\": \"89.31.143.1\",\n            \"asn\": \"\",\n            \"isp\": \"united-domains AG\",\n            \"latitude\": 49.44778060913086,\n            \"city_name\": \"Nuremberg\",\n            \"longitude\": 11.068329811096191,\n            \"region_name\": \"Bayern\",\n            \"reverse_dns\": \"www.udag.de\",\n            \"country_code\": \"DE\",\n            \"country_name\": \"Germany\",\n            \"continent_code\": \"EU\",\n            \"continent_name\": \"Europe\"\n          },\n          \"category\": {\n            \"is_pastebin\": false,\n            \"is_anonymizer\": false,\n            \"is_code_sandbox\": false,\n            \"is_form_builder\": false,\n            \"is_free_hosting\": false,\n            \"is_url_shortener\": false,\n            \"is_free_dynamic_dns\": false,\n            \"is_free_file_sharing\": false\n          },\n          \"blacklists\": {\n            \"engines\": {\n              \"0\": {\n                \"engine\": \"Phishing Test\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.novirusthanks.org\/\",\n                \"confidence\": \"low\"\n              },\n              \"1\": {\n                \"engine\": \"Scam Test\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.novirusthanks.org\/\",\n                \"confidence\": \"low\"\n              },\n              \"2\": {\n                \"engine\": \"Sinkholed Domain\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.novirusthanks.org\/\",\n                \"confidence\": \"low\"\n              },\n              \"3\": {\n                \"engine\": \"Suspicious Hosting IP\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.novirusthanks.org\/\",\n                \"confidence\": \"low\"\n              },\n              \"4\": {\n                \"engine\": \"AntiSocial Blacklist\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/theantisocialengineer.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"5\": {\n                \"engine\": \"Artists Against 419\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/wiki.aa419.org\/index.php\/Main_Page\",\n                \"confidence\": \"high\"\n              },\n              \"6\": {\n                \"engine\": \"AZORult Tracker\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/azorult-tracker.net\/\",\n                \"confidence\": \"high\"\n              },\n              \"7\": {\n                \"engine\": \"Badbitcoin\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/badbitcoin.org\/\",\n                \"confidence\": \"high\"\n              },\n              \"8\": {\n                \"engine\": \"Bambenek Consulting\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.bambenekconsulting.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"9\": {\n                \"engine\": \"C_APT_ure\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/c-apt-ure.blogspot.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"10\": {\n                \"engine\": \"CERT-GIB\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/www.cert-gib.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"11\": {\n                \"engine\": \"CERT-PA\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.cert-pa.it\/\",\n                \"confidence\": \"high\"\n              },\n              \"12\": {\n                \"engine\": \"CERT Polska\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.cert.pl\/\",\n                \"confidence\": \"high\"\n              },\n              \"13\": {\n                \"engine\": \"Chong Lua Dao\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/chongluadao.vn\/\",\n                \"confidence\": \"high\"\n              },\n              \"14\": {\n                \"engine\": \"CoinBlockerLists\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/gitlab.com\/ZeroDot1\/CoinBlockerLists\/\",\n                \"confidence\": \"high\"\n              },\n              \"15\": {\n                \"engine\": \"CRDF\",\n                \"elapsed\": \"0.00\",\n                \"detected\": true,\n                \"reference\": \"https:\/\/threatcenter.crdf.fr\/check.html\",\n                \"confidence\": \"high\"\n              },\n              \"16\": {\n                \"engine\": \"CyberCrime\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/cybercrime-tracker.net\/\",\n                \"confidence\": \"high\"\n              },\n              \"17\": {\n                \"engine\": \"Cyber Threat Coalition\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.cyberthreatcoalition.org\/\",\n                \"confidence\": \"high\"\n              },\n              \"18\": {\n                \"engine\": \"EtherAddressLookup\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/github.com\/409H\/EtherAddressLookup\/\",\n                \"confidence\": \"high\"\n              },\n              \"19\": {\n                \"engine\": \"EtherScamDB\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/etherscamdb.info\/\",\n                \"confidence\": \"high\"\n              },\n              \"20\": {\n                \"engine\": \"Fake Website Buster\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/fakewebsitebuster.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"21\": {\n                \"engine\": \"Fumik0 Malware Tracker\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/tracker.fumik0.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"22\": {\n                \"engine\": \"HijackedUrls\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.hijackedurls.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"23\": {\n                \"engine\": \"Joewein Domain BL\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/www.joewein.net\/\",\n                \"confidence\": \"high\"\n              },\n              \"24\": {\n                \"engine\": \"Malc0de\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/malc0de.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"25\": {\n                \"engine\": \"MetaMask EthPhishing\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/github.com\/MetaMask\/eth-phishing-detect\/\",\n                \"confidence\": \"high\"\n              },\n              \"26\": {\n                \"engine\": \"NABP Not Recommended Sites\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/safe.pharmacy\/buy-safely\/\",\n                \"confidence\": \"high\"\n              },\n              \"27\": {\n                \"engine\": \"Netlab360\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/netlab.360.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"28\": {\n                \"engine\": \"OpenPhish\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/openphish.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"29\": {\n                \"engine\": \"PetScams\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/petscams.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"30\": {\n                \"engine\": \"Phishing.Database\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/github.com\/mitchellkrogza\/Phishing.Database\",\n                \"confidence\": \"high\"\n              },\n              \"31\": {\n                \"engine\": \"PhishFeed\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/phishfeed.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"32\": {\n                \"engine\": \"PhishingReel\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/phishingreel.io\/\",\n                \"confidence\": \"high\"\n              },\n              \"33\": {\n                \"engine\": \"PhishStats\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/phishstats.info\/\",\n                \"confidence\": \"high\"\n              },\n              \"34\": {\n                \"engine\": \"PhishTank\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.phishtank.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"35\": {\n                \"engine\": \"Phishunt\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/phishunt.io\/\",\n                \"confidence\": \"high\"\n              },\n              \"36\": {\n                \"engine\": \"Quttera\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/quttera.com\/home\",\n                \"confidence\": \"low\"\n              },\n              \"37\": {\n                \"engine\": \"RPiList Not Serious\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/github.com\/RPiList\/specials\",\n                \"confidence\": \"high\"\n              },\n              \"38\": {\n                \"engine\": \"Scam.Directory\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/scam.directory\/\",\n                \"confidence\": \"high\"\n              },\n              \"39\": {\n                \"engine\": \"SecureReload Phishing List\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/securereload.tech\/\",\n                \"confidence\": \"high\"\n              },\n              \"40\": {\n                \"engine\": \"Spam404\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.spam404.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"41\": {\n                \"engine\": \"ThreatCrowd\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.threatcrowd.org\/\",\n                \"confidence\": \"high\"\n              },\n              \"42\": {\n                \"engine\": \"ThreatLog\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.threatlog.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"43\": {\n                \"engine\": \"Threat Sourcing\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.threatsourcing.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"44\": {\n                \"engine\": \"TR-PhishingList\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/github.com\/HorusTeknoloji\/TR-PhishingList\",\n                \"confidence\": \"high\"\n              },\n              \"45\": {\n                \"engine\": \"URLhaus\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/urlhaus.abuse.ch\/\",\n                \"confidence\": \"high\"\n              },\n              \"46\": {\n                \"engine\": \"URLVir\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"https:\/\/www.urlvir.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"47\": {\n                \"engine\": \"ViriBack C2 Tracker\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/tracker.viriback.com\/\",\n                \"confidence\": \"high\"\n              },\n              \"48\": {\n                \"engine\": \"VXVault\",\n                \"elapsed\": \"0.00\",\n                \"detected\": false,\n                \"reference\": \"http:\/\/vxvault.net\/\",\n                \"confidence\": \"high\"\n              }\n            },\n            \"scantime\": \"0.20\",\n            \"detections\": 1,\n            \"engines_count\": 49,\n            \"detection_rate\": \"2%\"\n          },\n          \"risk_score\": {\n            \"result\": 50\n          },\n          \"security_checks\": {\n            \"is_risky_category\": false,\n            \"is_most_abused_tld\": false,\n            \"website_popularity\": \"low\",\n            \"is_domain_ipv4_valid\": true,\n            \"is_domain_blacklisted\": true,\n            \"is_domain_ipv4_private\": false,\n            \"is_domain_ipv4_assigned\": true,\n            \"is_domain_ipv4_loopback\": false,\n            \"is_domain_ipv4_reserved\": false,\n            \"is_uncommon_host_length\": false,\n            \"is_uncommon_dot_char_count\": false,\n            \"is_uncommon_dash_char_count\": false,\n            \"is_uncommon_clickable_domain\": false\n          }\n        }\n      },\n      \"success\": true,\n      \"elapsed_time\": \"5.23\",\n      \"credits_remained\": 1.1,\n      \"estimated_queries\": \"13\"\n    },\n    \"status\": \"Success\"\n  },\n  \"status\": \"Success\",\n  \"message\": \"\",\n  \"operation\": null\n}",
+                "operationTitle": "Get Domain Reputation",
+                "pickFromTenant": false,
+                "step_variables": {
+                    "apivoid_data": "{{vars.result.data.result}}",
+                    "apivoid_engines": "{{vars.result.data.result.data.report.blacklists.engines}}"
+                }
+            },
+            "status": null,
+            "top": "165",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/0bfed618-0316-11e7-93ae-92361f002671",
+            "uuid": "6e6ea9d2-1ba6-45b6-80d7-0ce4b0e5118a",
+            "id": 5380
+        },
+        {
+            "@type": "WorkflowStep",
+            "name": "Reputation Data Preprocessing",
+            "description": null,
+            "arguments": {
+                "__tmp0": "{{vars.apivoid_data.data.report.blacklists.update({'engines':49})}}",
+                "__tmp2": "#Creates a dict {name : detected} from vars.apivoid_engines list of dicts#\n{%set undetected={}%}\n{%set detected={}%}\n{%if vars.apivoid_engines|length >0%}\n{%for k,v in vars.apivoid_engines.items()%}\n{%if v.detected%}\n{{detected.update({v.engine:vars.format_red.format('Detected')})}}\n{%else%}\n{{undetected.update({v.engine:vars.format_green.format('Undetected')})}}\n{%endif%}\n{%endfor%}\n{%endif%}\n{%set tmp_json=detected|combine(undetected)%}\n{%if tmp_json%}\n{{vars.list_of_lists.append(['Detected by Engines',tmp_json])}}\n{{vars.list_of_lists.append(['Detection',vars.apivoid_data.data.report.blacklists])}}\n{%endif%}"
+            },
+            "status": null,
+            "top": "300",
+            "left": "125",
+            "stepType": "\/api\/3\/workflow_step_types\/04d0cf46-b6a8-42c4-8683-60a7eaa69e8f",
+            "uuid": "ee0e4a19-8ca8-42d5-a40c-d59ea05b689b",
+            "id": 5381
+        }
+    ],
+    "routes": [
+        {
+            "@type": "WorkflowRoute",
+            "name": "get Domain Reputation -> Reputation Data Preprocessing",
+            "targetStep": "\/api\/3\/workflow_steps\/ee0e4a19-8ca8-42d5-a40c-d59ea05b689b",
+            "sourceStep": "\/api\/3\/workflow_steps\/6e6ea9d2-1ba6-45b6-80d7-0ce4b0e5118a",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "7c9e523b-811d-4e47-83c9-849efc6e97a7"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Start -> get IP Reputation",
+            "targetStep": "\/api\/3\/workflow_steps\/6e6ea9d2-1ba6-45b6-80d7-0ce4b0e5118a",
+            "sourceStep": "\/api\/3\/workflow_steps\/37e33975-72c9-480f-ac0a-a34c72c3f6fa",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "76d22302-83bf-4264-9d00-5c693cb21513"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Reputation Data Preprocessing -> Process Reputation Data",
+            "targetStep": "\/api\/3\/workflow_steps\/09748fb2-9be0-4205-808b-177772cf47cb",
+            "sourceStep": "\/api\/3\/workflow_steps\/ee0e4a19-8ca8-42d5-a40c-d59ea05b689b",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "286c266e-a120-4b2d-8371-b8e1df1a15bc"
+        },
+        {
+            "@type": "WorkflowRoute",
+            "name": "Process Reputation Data -> Output Data",
+            "targetStep": "\/api\/3\/workflow_steps\/fdc057c3-db99-4de6-935b-658f075ea06a",
+            "sourceStep": "\/api\/3\/workflow_steps\/09748fb2-9be0-4205-808b-177772cf47cb",
+            "label": null,
+            "isExecuted": false,
+            "uuid": "4500517f-3b75-4b5e-a16f-b7b09cc0d2a0"
+        }
+    ],
+    "priority": "\/api\/3\/picklists\/2b563c61-ae2c-41c0-a85a-c9709585e3f2",
+    "uuid": "0d10cbc2-f59e-4092-b421-7a749661b85e",
+    "recordTags": [
+        "Subroutine",
+        "Enrichment"
+    ],
+    "id": 1270,
+    "createUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "createDate": 1645639636,
+    "modifyUser": "\/api\/3\/people\/3451141c-bac6-467c-8d72-85e0fab569ce",
+    "modifyDate": 1645639636,
+    "owners": [],
+    "isPrivate": false
+}
